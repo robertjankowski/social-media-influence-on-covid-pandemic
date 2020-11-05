@@ -51,3 +51,11 @@ def set_positive_opinion(g: nx.Graph, node):
 
 def set_negative_opinion(g: nx.Graph, node):
     _set_opinion(g, node, -1)
+
+
+def get_status(g: nx.Graph, node):
+    return g.nodes[node]['l2_status']
+
+
+def get_opinion(g: nx.Graph, node):
+    return g.nodes[node]['l2_opinion']

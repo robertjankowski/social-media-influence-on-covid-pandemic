@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 
 @dataclass
 class VirtualLayerParameters:
-    """Parameters of simulation for $$l_1$$ (communication) layer
+    """Parameters of simulation for $$l_2$$ (communication) layer
 
     p_lambda: probability of agent to become aware of epidemic (U -> A)
 
@@ -15,7 +15,7 @@ class VirtualLayerParameters:
 
 @dataclass
 class PhysicalLayerParameters:
-    """Parameters of simulation for $$l_2$$ (epidemic) layer
+    """Parameters of simulation for $$l_1$$ (epidemic) layer
 
     p_beta: probability that agent becomes infected (S -> I)
 
@@ -35,7 +35,7 @@ class PhysicalLayerParameters:
 
 @dataclass
 class QVoterParameters:
-    """Parameters of q-voter model in $$l_1$$ (communication) layer
+    """Parameters of q-voter model in $$l_2$$ (communication) layer
 
     q: number of neighbours
 
@@ -46,3 +46,15 @@ class QVoterParameters:
     q: int
     p_p: float
     p_epsilon: float
+
+
+@dataclass
+class SocialMediaParameters:
+    """Parameters for social media in $$l_2$$ (communication) layer
+
+    p_xi: probability that agent becomes aware (U -> A)
+
+    n: number of steps when social media is working
+    """
+    p_xi: float
+    n: float
