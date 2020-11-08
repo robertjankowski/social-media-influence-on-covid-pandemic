@@ -59,3 +59,11 @@ def get_status(g: nx.Graph, node):
 
 def get_opinion(g: nx.Graph, node):
     return g.nodes[node]['l2_opinion']
+
+
+def flip_opinion(g: nx.Graph, node):
+    opinion = get_opinion(g, node)
+    if opinion == 1:
+        set_negative_opinion(g, node)
+    else:
+        set_positive_opinion(g, node)
