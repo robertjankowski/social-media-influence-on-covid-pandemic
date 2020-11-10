@@ -34,21 +34,22 @@ def death_rate_ratio(age: int):
 
     :param age: age of the agent
     """
-    if 0 < age < 5:
-        return 4
-    elif 5 < age < 18:
-        return 16
-    elif 18 < age < 30:
-        return 1
-    elif 30 < age < 40:
-        return 4
-    elif 40 < age < 50:
-        return 10
-    elif 50 < age < 65:
-        return 30
-    elif 65 < age < 75:
-        return 90
-    elif 75 < age < 85:
-        return 220
-    elif age > 85:
-        return 630
+    all = 1005
+    if 0 <= age < 5:
+        return 4 / all
+    elif 5 <= age < 18:
+        return 16 / all
+    elif 18 <= age < 30:
+        return 1 / all
+    elif 30 <= age < 40:
+        return 4 / all
+    elif 40 <= age < 50:
+        return 10 / all
+    elif 50 <= age < 65:
+        return 30 / all
+    elif 65 <= age < 75:
+        return 90 / all
+    elif 75 <= age < 85:
+        return 220 / all
+    elif age >= 85:
+        return 630 / all
