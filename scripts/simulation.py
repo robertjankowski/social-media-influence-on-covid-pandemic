@@ -109,21 +109,24 @@ def _single_step(step,
                  l2_social_media_params: SocialMediaParameters):
     N = l1_layer.number_of_nodes()
     random_node = random.randint(0, N - 1)
-    _virtual_layer_step(step, random_node, l2_layer, l2_params, l2_voter_params, l2_social_media_params)
+    _social_media_layer_step(step, l2_layer, l2_social_media_params)
+    _virtual_layer_step(random_node, l2_layer, l2_params, l2_voter_params)
     _epidemic_layer_step(random_node, l1_layer, l2_layer, l1_params)
 
 
-def _virtual_layer_step(step,
-                        random_node,
+def _social_media_layer_step(step, l2_layer: nx.Graph, l2_social_media_params: SocialMediaParameters):
+    # Social media can influence every agent
+    if step % l2_social_media_params.n == 0:
+        for n in l2_layer.nodes:
+            if random.random() < l2_social_media_params.p_xi:
+                l2.set_aware(l2_layer, n)
+
+
+def _virtual_layer_step(random_node,
                         l2_layer: nx.Graph,
                         l2_params: VirtualLayerParameters,
-                        l2_voter_params: QVoterParameters,
-                        l2_social_media_params: SocialMediaParameters):
+                        l2_voter_params: QVoterParameters):
     l2_node_status = l2.get_status(l2_layer, random_node)
-
-    if step % l2_social_media_params.n == 0:  # the social media can influence agent
-        if random.random() < l2_social_media_params.p_xi and l2_node_status == 'U':
-            l2.set_aware(l2_layer, random_node)
 
     if l2_node_status == 'U':
         if random.random() < l2_params.p_lambda:

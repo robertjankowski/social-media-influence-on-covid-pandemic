@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 import sys
+import seaborn as sns
 
 sys.path.append("../")
 
@@ -150,3 +151,21 @@ def draw_virtual_layer(g: nx.Graph, ax=None, pos=None, node_size_scale=10, edge_
 
     # Opinions of the nodes
     nx.draw_networkx_labels(g, pos=pos, ax=ax, labels=nodes_opinions, font_weight='bold', font_size=13)
+
+
+def plot_heatmap(array, xtickslabels: list, ytickslabels: list, colorscale_label: str, title_label: str):
+    """
+    Plot heatmap from 2d array with x and y ticks labels
+
+    :param array: 2d array
+    :param xtickslabels:
+    :param ytickstlabels:
+    :param colorscale_label:
+    :param title_label:
+    """
+    xticks_labels = ['{:.2f}'.format(l) for l in xtickslabels]
+    yticks_labels = ['{:.2f}'.format(b) for b in ytickslabels]
+    sns.heatmap(array, annot=False, cmap="YlGnBu",
+                yticklabels=yticks_labels, xticklabels=xticks_labels,
+                vmin=0, vmax=1, cbar_kws={'label': colorscale_label})
+    plt.title(title_label)
