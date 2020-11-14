@@ -114,6 +114,42 @@ def gamma_lambda_dead_experiment(resolution=100):
     return gammas, lambdas, dead_ratio_output, recovered_ratio_output
 
 
+def gamma_p_dead_experiment(resolution=100):
+    """
+    In this experiment, I would like to check how the probability of going into qurantine (Gamma)
+        and the probability of acting independently in voter model (p) induce the toll of deaths.
+
+    p: 0 - 1
+    Lambda: 0 - 1
+    """
+    gammas = np.linspace(0, 1, resolution)
+    ps = np.linspace(0, 1, resolution)
+    metrics = {'dead_ratio': ('l1_layer', dead_ratio),
+               'recovered_ratio': ('l1_layer', recovered_ratio)}
+
+    l2_params = VirtualLayerParameters(0.6, 0.4)
+    l2_social_media_params = SocialMediaParameters(1e-10, 1e10)  # I remove social media
+    dead_ratio_output = []
+    recovered_ratio_output = []
+    for g in tqdm(gammas):
+        dead_ratio_output_part = []
+        recovered_ratio_output_part = []
+        for p in ps:
+            l1_params = PhysicalLayerParameters(0.3, g, 0.9)
+            l2_voter_params = QVoterParameters(4, p, 0.3)
+
+            out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
+                                              INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, l2_voter_params,
+                                              l2_social_media_params, metrics)
+
+            dead_ratio_output_part.append(out['dead_ratio'][-1])
+            recovered_ratio_output_part.append(out['recovered_ratio'][-1])
+        dead_ratio_output.append(dead_ratio_output_part)
+        recovered_ratio_output.append(recovered_ratio_output_part)
+
+    return gammas, ps, dead_ratio_output, recovered_ratio_output
+
+
 def social_media_experiment(resolution=10, n_repeat_step=10):
     """
     In this experiment I will examine the social media influance on the toll of deaths.
