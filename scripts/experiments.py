@@ -1,9 +1,11 @@
 import numpy as np
+import pandas as pd
+from tqdm import tqdm
+
 from scripts.simulation import init_run_simulation
 from scripts.parameters import *
 from scripts.epidemic_metrics import *
 from scripts.virtual_metrics import *
-from tqdm import tqdm
 
 DEFAULT_L1_PARAMS = PhysicalLayerParameters(0.2, 0.6, 0.999)
 DEFAULT_L2_PARAMS = VirtualLayerParameters(0.4, 0.6)
@@ -19,11 +21,11 @@ metrics = {'aware_ratio': ('l2_layer', aware_ratio),
            'susceptible_ratio': ('l1_layer', susceptible_ratio),
            'mean_opinion': ('l2_layer', mean_opinion)}
 
-N_AGENTS = 500
-N_STEPS = 10000
-N_ADDITIONAL_VIRTUAL_LINKS = 1000
-INIT_INFECTED_FRACTION = 0.01
-INIT_AWARE_FRACTION = 0.01
+N_AGENTS = 100
+N_STEPS = 20000
+N_ADDITIONAL_VIRTUAL_LINKS = 200
+INIT_INFECTED_FRACTION = 0.05
+INIT_AWARE_FRACTION = 0.05
 
 
 def perform_simulation(l1_params=DEFAULT_L1_PARAMS,
@@ -192,3 +194,45 @@ def social_media_experiment(resolution=10, n_repeat_step=10):
         recovered_ratio_output.append(recovered_ratio_output_xi)
 
     return social_media_n, xis, dead_ratio_output, recovered_ratio_output
+
+
+def q_voter_experiment(qs: list, n_runs=10):
+    metrics = {'dead_ratio': ('l1_layer', dead_ratio),
+               'recovered_ratio': ('l1_layer', recovered_ratio),
+               'infected_ratio': ('l1_layer', infected_ratio)}
+    l1_params = PhysicalLayerParameters(0.2, 0.6, 0.9)
+    l2_params = VirtualLayerParameters(0.3, 0.4)
+    l2_social_media_params = SocialMediaParameters(0, 1e10)
+
+    dr_output = []
+    rr_output = []
+    ir_output = []
+    for q in tqdm(qs):
+        dr = []
+        rr = []
+        ir = []
+        for _ in range(n_runs):
+            l2_voter_params = QVoterParameters(q, 0.5, 0.3)
+
+            out, _, _ = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
+                                            INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, l2_voter_params,
+                                            l2_social_media_params, metrics)
+
+            dr.append(out['dead_ratio'][-1])
+            rr.append(out['recovered_ratio'][-1])
+            ir.append(max(out['infected_ratio']))
+
+        dr_output.append(dr)
+        rr_output.append(rr)
+        ir_output.append(ir)
+
+    mean = lambda x: [np.mean(i) for i in x]
+    std = lambda x: [np.std(i) for i in x]
+    df = pd.DataFrame(data={'q': qs,
+                            'mean_dead_ratio': mean(dr_output),
+                            'std_dead_ratio': std(dr_output),
+                            'mean_recovered_ratio': mean(rr_output),
+                            'std_recovered_ratio': std(rr_output),
+                            'mean_infected_ratio': mean(ir_output),
+                            'std_infected_ratio': std(ir_output)})
+    return df

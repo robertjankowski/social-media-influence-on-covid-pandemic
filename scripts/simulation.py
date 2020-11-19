@@ -25,7 +25,7 @@ def init_run_simulation(n_agents: int,
     :param n_agents: number of agents in each layer
     :param n_additional_virtual_links: number of additional links in virtual layer
     :param init_infection_fraction: initial fraction of infected agents in physical layer
-    :param init_aware_fraction: initial fraction of awared agents in virtual layer
+    :param init_aware_fraction: initial fraction of aware agents in virtual layer
     :param steps: number of simulation steps
     :param l1_params: parameters for l1_layer
     :param l2_params: parameters for l2_layer
