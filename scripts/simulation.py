@@ -129,8 +129,12 @@ def _virtual_layer_step(random_node,
     l2_node_status = l2.get_status(l2_layer, random_node)
 
     if l2_node_status == 'U':
-        if random.random() < l2_params.p_lambda:
-            l2.set_aware(l2_layer, random_node)
+        # When one neighbour of the agent is aware, he can influence that agent.
+        for neighbour in l2_layer.neighbors(random_node):
+            if l2.get_status(l2_layer, neighbour) == 'A':
+                if random.random() < l2_params.p_lambda:
+                    l2.set_aware(l2_layer, random_node)
+                    break
     elif l2_node_status == 'A':
         if random.random() < l2_params.p_delta:
             l2.set_unaware(l2_layer, random_node)
