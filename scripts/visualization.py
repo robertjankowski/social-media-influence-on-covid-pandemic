@@ -50,7 +50,7 @@ def draw_network(g: nx.Graph, ax=None, pos=None, node_size_list=None, node_size_
         pos = nx.spring_layout(g)
     if node_size_list is None:
         node_size_list = degree_node_size(g, node_size_scale)
-    nx.draw_networkx_edges(g, ax=ax, alpha=edge_alpha, pos=pos)
+    nx.draw_networkx_edges(g, ax=ax, alpha=edge_alpha, pos=pos, connectionstyle='arc3, rad = 0.1')
     nx.draw_networkx_nodes(g, node_size=node_size_list, ax=ax, pos=pos,
                            edgecolors=node_border_color, linewidths=node_border_width)
 
@@ -89,7 +89,8 @@ def draw_epidemic_layer(g: nx.Graph, ax=None, pos=None, node_size_scale=10, edge
     recovered_nodes_sizes = [node_size_scale * sizes[node] for node in recovered_nodes]
     dead_nodes_sizes = [node_size_scale * sizes[node] for node in dead_nodes]
 
-    nx.draw_networkx_edges(g, ax=ax, alpha=edge_alpha, pos=pos)
+    nx.draw_networkx_edges(g, ax=ax, alpha=edge_alpha, pos=pos, connectionstyle='arc3,rad=0.1',
+                           arrowstyle='<->')
     # Susceptible nodes
     nx.draw_networkx_nodes(g, nodelist=susceptible_nodes, node_size=susceptible_nodes_sizes,
                            node_color='orange', ax=ax, pos=pos, edgecolors=node_border_color,
@@ -139,7 +140,8 @@ def draw_virtual_layer(g: nx.Graph, ax=None, pos=None, node_size_scale=10, edge_
     aware_nodes_sizes = [node_size_scale * sizes[node] for node in aware_nodes]
     unaware_nodes_sizes = [node_size_scale * sizes[node] for node in unaware_nodes]
 
-    nx.draw_networkx_edges(g, ax=ax, alpha=edge_alpha, pos=pos)
+    nx.draw_networkx_edges(g, ax=ax, alpha=edge_alpha, pos=pos, connectionstyle='arc3,rad=0.1',
+                           arrowstyle='<->', edgelist=g.out_edges)
     # Susceptible nodes
     nx.draw_networkx_nodes(g, nodelist=aware_nodes, node_size=aware_nodes_sizes,
                            node_color='violet', ax=ax, pos=pos, edgecolors=node_border_color,

@@ -10,7 +10,7 @@ def pearson_coefficient_between_layers(g1: nx.Graph, g2: nx.Graph) -> float:
     """
     Return person correlation between layers for given two graphs
 
-    r_{\alpha\beta} \in (0, 1)
+    r_{\alpha\beta} \in <-1, 1>
 
     :param g1: nx.Graph
     :param g2: nx.Graph

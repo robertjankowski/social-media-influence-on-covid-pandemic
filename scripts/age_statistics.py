@@ -28,7 +28,7 @@ def generate_from_age_gender_distribution(samples: int, gender: str):
 
 def death_rate_ratio(age: int):
     """
-    Take into account age when calculating death probability. The 18-29 years old are the comparision group
+    Take into account age when calculating death probability. The 18-29 years old are the comparison group
 
     Based on `https://www.cdc.gov/coronavirus/2019-ncov/covid-data/investigations-discovery/hospitalization-death-by-age.html`
 
