@@ -6,7 +6,7 @@ import networkx as nx
 
 def create_bilayer_network(agents: int, additional_virtual_links: int, m=5):
     """
-    Create bilayer BA network with additional `additional_virtual_links` in virutal layer
+    Create bilayer BA network with additional `additional_virtual_links` in virtual layer
 
     :param agents: number of individuals
     :param additional_virtual_links: number of additional edges in virtual layer

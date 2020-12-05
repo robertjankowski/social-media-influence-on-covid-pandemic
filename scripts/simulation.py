@@ -138,12 +138,11 @@ def _virtual_layer_step(random_node,
     elif l2_node_status == 'A':
         if random.random() < l2_params.p_delta:
             l2.set_unaware(l2_layer, random_node)
-        else:
-            # Voter model
-            if random.random() < l2_voter_params.p_p:
-                _voter_act_non_conformity(random_node, l2_layer)
-            else:
-                _voter_act_conformity(random_node, l2_layer, l2_voter_params)
+    # run Voter model even though the agent is in UNAWARE state
+    if random.random() < l2_voter_params.p_p:
+        _voter_act_non_conformity(random_node, l2_layer)
+    else:
+        _voter_act_conformity(random_node, l2_layer, l2_voter_params)
 
 
 def _voter_act_non_conformity(random_node, l2_layer: nx.Graph):
