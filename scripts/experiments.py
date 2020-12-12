@@ -236,3 +236,46 @@ def q_voter_experiment(qs: list, n_runs=10):
                             'mean_infected_ratio': mean(ir_output),
                             'std_infected_ratio': std(ir_output)})
     return df
+
+
+def experiment1(qs: list, ps: list, filename: str, n_runs=10):
+    metrics = {'dead_ratio': ('l1_layer', dead_ratio),
+               'recovered_ratio': ('l1_layer', recovered_ratio),
+               'infected_ratio': ('l1_layer', infected_ratio)}
+    l1_params = PhysicalLayerParameters(0.2, 0.6, 0.9)
+    l2_params = VirtualLayerParameters(0.3, 0.4)
+    l2_social_media_params = SocialMediaParameters(0, 1e10)
+
+    out_dr = {}
+    out_rr = {}
+    for q in tqdm(qs):
+        for p in tqdm(ps):
+            dr = []
+            ir = []
+            for _ in range(n_runs):
+                voter_params = QVoterParameters(q, p, 0.3)
+
+                out, _, _ = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
+                                                INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, voter_params,
+                                                l2_social_media_params, metrics)
+                dr.append(out['dead_ratio'][-1])
+                ir.append(max(out['infected_ratio']))
+
+            out_dr[(q, p)] = np.mean(dr)
+            out_rr[(q, p)] = np.mean(ir)
+
+    out_dr = np.array(list(out_dr.values())).reshape(len(qs), len(ps))
+    out_rr = np.array(list(out_rr.values())).reshape(len(qs), len(ps))
+    out_dr = pd.DataFrame(out_dr, index=qs, columns=ps)
+    out_rr = pd.DataFrame(out_rr, index=qs, columns=ps)
+    params_str = format_parameters(l1_params, l2_params, l2_social_media_params)
+    out_dr.to_csv('dead_ratio_' + params_str + filename)
+    out_rr.to_csv('recovered_ratio_' + params_str + filename)
+
+
+def format_parameters(l1_params: PhysicalLayerParameters,
+                      l2_params: VirtualLayerParameters,
+                      l2_social_media_params: SocialMediaParameters):
+    l1 = f'L1-beta={l1_params.p_beta}_gamma={l1_params.p_gamma}_kappa={l1_params.p_kappa}_mu={l1_params.p_mu}'
+    l2 = f'_L2-delta={l2_params.p_delta}_lambda={l2_params.p_lambda}_xi={l2_social_media_params.p_xi}_n={l2_social_media_params.n}'
+    return l1 + l2
