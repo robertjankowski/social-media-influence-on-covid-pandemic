@@ -8,7 +8,7 @@ sys.path.append("../")
 from scripts.network import degree_node_size
 
 DEFAULT_CONFIG = {
-    'font.size': 14,
+    'font.size': 15,
     'font.family': 'sans-serif',
     'font.sans-serif': ['DejaVu Sans']
 }
