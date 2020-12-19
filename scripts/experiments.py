@@ -242,9 +242,9 @@ def experiment1(qs: list, ps: list, filename: str, n_runs=10):
     metrics = {'dead_ratio': ('l1_layer', dead_ratio),
                'recovered_ratio': ('l1_layer', recovered_ratio),
                'infected_ratio': ('l1_layer', infected_ratio)}
-    l1_params = PhysicalLayerParameters(0.2, 0.6, 0.9)
-    l2_params = VirtualLayerParameters(0.3, 0.4)
-    l2_social_media_params = SocialMediaParameters(0, 1e10)
+    l1_params = PhysicalLayerParameters(0.05, 0.1, 0.8)
+    l2_params = VirtualLayerParameters(0.01, 0.1)
+    l2_social_media_params = SocialMediaParameters(1e10, 1e-10)
 
     out_dr = {}
     out_rr = {}
