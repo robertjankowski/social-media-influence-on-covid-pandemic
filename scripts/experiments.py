@@ -279,3 +279,46 @@ def format_parameters(l1_params: PhysicalLayerParameters,
     l1 = f'L1-beta={l1_params.p_beta}_gamma={l1_params.p_gamma}_kappa={l1_params.p_kappa}_mu={l1_params.p_mu}'
     l2 = f'_L2-delta={l2_params.p_delta}_lambda={l2_params.p_lambda}_xi={l2_social_media_params.p_xi}_n={l2_social_media_params.n}'
     return l1 + l2
+
+
+def experiment2(xis: list, ns: list, filename: str, n_runs=10):
+    metrics = {'dead_ratio': ('l1_layer', dead_ratio),
+               'infected_ratio': ('l1_layer', infected_ratio)}
+    l1_params = PhysicalLayerParameters(0.05, 0.1, 0.8)
+    l2_params = VirtualLayerParameters(0.01, 0.1)
+    l2_voter_params = QVoterParameters(4, 0.5, 0.3)
+
+    out_dr = {}
+    out_ir = {}
+    for xi in tqdm(xis):
+        for n in tqdm(ns):
+            dr = []
+            ir = []
+            for _ in range(n_runs):
+                social_parameters = SocialMediaParameters(xi, n)
+
+                out, _, _ = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
+                                                INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, l2_voter_params,
+                                                social_parameters, metrics)
+
+                dr.append(out['dead_ratio'][-1])
+                ir.append(max(out['infected_ratio']))
+
+            out_dr[(xi, n)] = np.mean(dr)
+            out_ir[(xi, n)] = np.mean(ir)
+
+    out_dr = np.array(list(out_dr.values())).reshape(len(xis), len(ns))
+    out_rr = np.array(list(out_ir.values())).reshape(len(xis), len(ns))
+    out_dr = pd.DataFrame(out_dr, index=xis, columns=ns)
+    out_rr = pd.DataFrame(out_rr, index=xis, columns=ns)
+    params_str = format_parameters_e2(l1_params, l2_params, l2_voter_params)
+    out_dr.to_csv('dead_ratio_' + params_str + filename)
+    out_rr.to_csv('infected_ratio_' + params_str + filename)
+
+
+def format_parameters_e2(l1_params: PhysicalLayerParameters,
+                         l2_params: VirtualLayerParameters,
+                         l2_voter_params: QVoterParameters):
+    l1 = f'L1-beta={l1_params.p_beta}_gamma={l1_params.p_gamma}_kappa={l1_params.p_kappa}_mu={l1_params.p_mu}'
+    l2 = f'_L2-delta={l2_params.p_delta}_lambda={l2_params.p_lambda}_q={l2_voter_params.q}_p={l2_voter_params.p_p}_epsilon={l2_voter_params.p_epsilon}'
+    return l1 + l2
