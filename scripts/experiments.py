@@ -284,10 +284,10 @@ def format_parameters(l1_params: PhysicalLayerParameters,
 def experiment2(xis: list, ns: list, filename: str, n_runs=10):
     metrics = {'dead_ratio': ('l1_layer', dead_ratio),
                'infected_ratio': ('l1_layer', infected_ratio)}
-    l1_params = PhysicalLayerParameters(0.05, 0.1, 0.8)
-    l2_params = VirtualLayerParameters(0.01, 0.1)
+    l1_params = PhysicalLayerParameters(0.5, 0.2, 0.85)
+    l2_params = VirtualLayerParameters(0.01, 0.99)
     l2_voter_params = QVoterParameters(4, 0.5, 0.3)
-
+    print(l1_params, l2_params, l2_voter_params)
     out_dr = {}
     out_ir = {}
     for xi in tqdm(xis):
@@ -308,12 +308,12 @@ def experiment2(xis: list, ns: list, filename: str, n_runs=10):
             out_ir[(xi, n)] = np.mean(ir)
 
     out_dr = np.array(list(out_dr.values())).reshape(len(xis), len(ns))
-    out_rr = np.array(list(out_ir.values())).reshape(len(xis), len(ns))
+    out_ir = np.array(list(out_ir.values())).reshape(len(xis), len(ns))
     out_dr = pd.DataFrame(out_dr, index=xis, columns=ns)
-    out_rr = pd.DataFrame(out_rr, index=xis, columns=ns)
+    out_ir = pd.DataFrame(out_ir, index=xis, columns=ns)
     params_str = format_parameters_e2(l1_params, l2_params, l2_voter_params)
     out_dr.to_csv('dead_ratio_' + params_str + filename)
-    out_rr.to_csv('infected_ratio_' + params_str + filename)
+    out_ir.to_csv('infected_ratio_' + params_str + filename)
 
 
 def format_parameters_e2(l1_params: PhysicalLayerParameters,
