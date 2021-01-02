@@ -12,7 +12,7 @@ The project aims to scrutinize the influence of social media on the global pande
 - \lambda -- the probability that the agent will be acknowledged about the epidemic.
 - \delta -- the probability that the agent will forget about the epidemic.
 
-![]()
+![](plots/presentation/sieci_wielopoziomowe_komunikacjadrawio.png)
 
 Moreover, the agent has an opinion about the epidemic safety rules (+1 or -1). For instance, opinion +1 means a positive attitude towards e.g. quarantine and vaccination. As the result, the rules of the q-voter model are also simulating. The figure below depicts the update algorithm for the randomly selected agent.
 
@@ -28,8 +28,8 @@ Parameters:
 - \mu -- recovery probability 
 - \kappa -- death probability
 
-![]()
 
+![](plots/presentation/sieci_wielopoziomowe_epidemia_schemat.png)
 
 ### Simulation parameters:
 
