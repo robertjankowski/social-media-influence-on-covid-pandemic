@@ -42,6 +42,11 @@ quarantined), R (recovered), D (dead). Parameters:
 
 ![](plots/presentation/sieci_wielopoziomowe_epidemia_schemat.png)
 
+Moreover, each agent has the age and the gender, which influence on epidemic parameters.
+
+- age -- based on _COVID-19 Hospitalization and Death by age_ [3]
+- gender -- based on raport _Age, gender, and territory of COVID-19 infections and fatalities_ [4]
+
 ### Simulation parameters:
 
 - number of agents N = 100
@@ -74,3 +79,15 @@ What's more, modifying the physical contacts layer's parameters leads to complet
 **To what extent the social media makes an impact on the infected and dead ratio?**
 
 > In progress ...
+
+
+
+#### Bibliography
+
+[1] Granell, C., Gómez, S., & Arenas, A. (2013). _Dynamical Interplay between Awareness and Epidemic Spreading in Multiplex Networks_. Physical Review Letters, 111(12). doi:10.1103/physrevlett.111.128701
+
+[2] Granell C, Gómez S, Arenas A. _Competing spreading processes on multiplex networks: awareness and epidemics_. Phys Rev E Stat Nonlin Soft Matter Phys. 2014 Jul;90(1):012808. doi: 10.1103/PhysRevE.90.012808
+
+[3] https://www.cdc.gov/coronavirus/2019-ncov/covid-data/investigations-discovery/hospitalization-death-by-age.html
+
+[4] https://publications.jrc.ec.europa.eu/repository/bitstream/JRC120680/gender_territory_covid19_online.pdf
