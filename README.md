@@ -27,7 +27,7 @@ Moreover, the agent has an opinion about the epidemic safety rules (+1 or -1). F
 attitude towards e.g. quarantine and vaccination. As the result, the rules of the q-voter model are also simulating. The
 figure below depicts the update algorithm for the randomly selected agent.
 
-<img src="plots/presentation/q-voter-schema.png" alt="q-voter" width="150" height="100"/>
+<img src="plots/presentation/q-voter-schema.png" alt="q-voter" width="450" height="200"/>
 
 **Ad (1b)** Every `n` steps all agents can become aware of the epidemic with the probability \xi due to the social
 media.
