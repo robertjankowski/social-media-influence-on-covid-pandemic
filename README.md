@@ -78,9 +78,15 @@ What's more, modifying the physical contacts layer's parameters leads to complet
 
 **To what extent the social media makes an impact on the infected and dead ratio?**
 
-> In progress ...
+|![](plots/experiment2/dead_ratio-beta=0.5_gamma=0.2_mu=0.85_lambda=0.01_delta=0.99_big-1.png) | ![](plots/experiment2/infected_ratio-beta=0.5_gamma=0.2_mu=0.85_lambda=0.01_delta=0.99_big-1.png)
+|:----:|:----:|
+| Dead ratio | Infected ratio |
+
+The results indicate no relation between the social media parameters 
+and the toll of deaths and also the maximum number of infected agents. 
 
 
+To conclude, the mere agent's awareness does not have such an impact compared to the previous experiment.
 
 #### Bibliography
 
