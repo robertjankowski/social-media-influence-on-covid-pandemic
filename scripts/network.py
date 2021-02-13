@@ -13,7 +13,7 @@ def create_bilayer_network(agents: int, additional_virtual_links: int, m=5):
     :param m: starting number of nodes in the BA model
     :return: dict with two layers
     """
-    l1_layer = nx.barabasi_albert_graph(agents, m=5)
+    l1_layer = nx.barabasi_albert_graph(agents, m=m)
     l2_layer = copy.deepcopy(l1_layer)
     l2_layer = add_edges_randomly(l2_layer, additional_virtual_links)
     return l1_layer, l2_layer
@@ -49,5 +49,4 @@ def degree_node_size(g: nx.Graph, scale=10):
     :param scale: float
     :return:
     """
-    d = dict(g.degree)
-    return [scale * v for v in d.values()]
+    return [scale * v for v in dict(g.degree).values()]

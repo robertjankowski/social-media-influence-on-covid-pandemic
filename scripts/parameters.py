@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
@@ -11,6 +11,9 @@ class VirtualLayerParameters:
     """
     p_lambda: float
     p_delta: float
+
+    def __str__(self):
+        return f'lambda={self.p_lambda}_delta={self.p_delta}'
 
 
 @dataclass
@@ -32,6 +35,9 @@ class PhysicalLayerParameters:
     def __post_init__(self):
         self.p_kappa = 1 - self.p_mu
 
+    def __str__(self):
+        return f'beta={self.p_beta}_gamma={self.p_gamma}_mu={self.p_mu}_kappa={self.p_kappa}'
+
 
 @dataclass
 class QVoterParameters:
@@ -47,6 +53,9 @@ class QVoterParameters:
     p_p: float
     p_epsilon: float
 
+    def __str__(self):
+        return f'q={self.q}_p={self.p_p}_epsilon={self.p_epsilon}'
+
 
 @dataclass
 class SocialMediaParameters:
@@ -58,3 +67,6 @@ class SocialMediaParameters:
     """
     p_xi: float
     n: float
+
+    def __str__(self):
+        return f'xi={self.p_xi}_n={self.n}'

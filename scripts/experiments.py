@@ -49,7 +49,7 @@ def perform_simulation(l1_params=DEFAULT_L1_PARAMS,
 def beta_lambda_dead_experiment(resolution=100):
     """
     In this experiment, I would like to check how the probability of being infected (Beta)
-        and the probability of becoming aware (Lambda) induce the toll of deaths.
+        and the probability of becoming aware (\\lambda) induce the toll of deaths.
 
     Beta: 0 - 1
     Lambda: 0 - 1

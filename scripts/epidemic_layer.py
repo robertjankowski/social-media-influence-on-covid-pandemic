@@ -17,7 +17,7 @@ def initialize_epidemic(g: nx.Graph, infected_fraction: float):
     :param infected_fraction: a fraction of infected nodes at the onset
     :return g_copy: nx.Graph l1 layer with initialized agents
     """
-    assert (g.number_of_nodes() % 2 == 0)  # odd number
+    assert g.number_of_nodes() % 2 == 0  # odd number
     g_copy = copy.deepcopy(g)
 
     females_ages = generate_from_age_gender_distribution(g.number_of_nodes(), 'F')
