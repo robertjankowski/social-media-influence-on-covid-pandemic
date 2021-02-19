@@ -8,9 +8,13 @@ def format_parameters(l1_params: PhysicalLayerParameters,
                       l2_params: VirtualLayerParameters,
                       l2_voter_params: QVoterParameters,
                       l2_social_media_params: SocialMediaParameters,
-                      n_runs: int):
+                      n_runs: int,
+                      n_steps: int,
+                      n_agents: int,
+                      n_additional_virtual_links: int):
     l2 = f'_L2-{l2_params}_{l2_voter_params}_{l2_social_media_params}'
-    return f'L1-{l1_params}' + l2 + f'_NRUNS={n_runs}'
+    return f'L1-{l1_params}' + l2 + f'_NRUNS={n_runs}' + f'_NSTEPS={n_steps}' \
+           + f'_NAGENTS={n_agents}' + f'_NLINKS={n_additional_virtual_links}'
 
 
 def save_results(output_dead_rate: dict, output_infected_rate: dict, params1, params2, path: str):
