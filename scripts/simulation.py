@@ -18,6 +18,8 @@ def init_run_simulation(n_agents: int,
                         l2_voter_params: QVoterParameters,
                         l2_social_media_params: SocialMediaParameters,
                         metrics: dict,
+                        network_m: int = 3,
+                        network_p: int = None,
                         verbose=False):
     """
     Perform COVID-19 simulation on multilayer networks
@@ -33,11 +35,13 @@ def init_run_simulation(n_agents: int,
     :param l2_social_media_params: parameters for social media in l2_layer
     :param metrics: format e.g.:
                 {'aware_ratio': ('l1_layer': aware_ratio), 'infected_ratio': ('l2_layer', infected_ratio), ... }
+    :param network_m: The number of random edges to add for each new node
+    :param network_p: Probability of adding the triangle after adding a random edge
     :param verbose: print simulation status
     :return: output_metrics: format: {'aware_ratio': [0.45, 0.4, ...], 'infected_ratio': [0.4, 0.55, 0.7, ...], ...}
              l1_layer and l2_layer
     """
-    l1_layer, l2_layer = create_bilayer_network(n_agents, n_additional_virtual_links)
+    l1_layer, l2_layer = create_bilayer_network(n_agents, n_additional_virtual_links, m=network_m, p=network_p)
     l1_layer_init = l1.initialize_epidemic(l1_layer, init_infection_fraction)
     l2_layer_init = l2.initialize_virtual(l2_layer, init_aware_fraction)
     return run(l1_layer_init,

@@ -4,16 +4,23 @@ import random
 import networkx as nx
 
 
-def create_bilayer_network(agents: int, additional_virtual_links: int, m=5):
+def create_bilayer_network(agents: int, additional_virtual_links: int, m=3, p=None):
     """
-    Create bilayer BA network with additional `additional_virtual_links` in virtual layer
+    Create bilayer network with additional `additional_virtual_links` in virtual layer.
+    If p is None create simple BA network, otherwise use Holme and Kim algorithm with triad formation [1].
+
+    [1] P. Holme and B. J. Kim, “Growing scale-free networks with tunable clustering”, Phys. Rev. E, 65, 026107, 2002.
 
     :param agents: number of individuals
     :param additional_virtual_links: number of additional edges in virtual layer
     :param m: starting number of nodes in the BA model
-    :return: dict with two layers
+    :param p: probability of adding a triangle after adding a random edge
+    :return: tuple (layer1, layer2)
     """
-    l1_layer = nx.barabasi_albert_graph(agents, m=m)
+    if p is None:
+        l1_layer = nx.barabasi_albert_graph(agents, m=m)
+    else:
+        l1_layer = nx.powerlaw_cluster_graph(agents, m=m, p=p)
     l2_layer = copy.deepcopy(l1_layer)
     l2_layer = add_edges_randomly(l2_layer, additional_virtual_links)
     return l1_layer, l2_layer
