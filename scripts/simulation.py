@@ -213,7 +213,7 @@ def _get_combined_beta_probability(p_beta: float, age: int, gender: str):
         age_rate = 0.9
 
     if gender == 'F':
-        gender_rate = 1.1
+        gender_rate = 1.0  # For now gender does not modify any probability
     elif gender == 'M':
         gender_rate = 1.0
 

@@ -4,7 +4,7 @@ import networkx as nx
 import random
 
 
-def initialize_virtual(g: nx.Graph, aware_fraction: float):
+def initialize_virtual(g: nx.Graph, aware_fraction: float, negative_opinion_fraction: float = 0.5):
     """
     Initialize `l2` layer with `g.number_of_nodes() * aware_fraction` aware agents and the rest unaware.
 
@@ -12,6 +12,7 @@ def initialize_virtual(g: nx.Graph, aware_fraction: float):
 
     :param g: nx.Graph l2 layer
     :param aware_fraction: a fraction of aware nodes at the onset
+    :param negative_opinion_fraction: a fraction of negative opinions (default 50/50)
     :return g_copy: nx.Graph l2 layer with initialized agents
     """
     g_copy = copy.deepcopy(g)
@@ -21,7 +22,7 @@ def initialize_virtual(g: nx.Graph, aware_fraction: float):
         else:
             set_unaware(g_copy, node)
 
-        if random.random() < 0.5:
+        if random.random() < negative_opinion_fraction:
             set_negative_opinion(g_copy, node)
         else:
             set_positive_opinion(g_copy, node)
