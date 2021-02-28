@@ -27,16 +27,22 @@ class PhysicalLayerParameters:
     p_mu: probability that agent recovers from illness (Q -> R)
 
     p_kappa: (1 - p_mu): probability that agent dies (Q -> D)
+
+    p_omega: probability that agent recovers being infected (I -> R)
+
+    p_zeta: probability that agent dies being infected (I -> R)
     """
     p_beta: float
     p_gamma: float
     p_mu: float
+    p_omega: float
+    p_zeta: float
 
     def __post_init__(self):
         self.p_kappa = 1 - self.p_mu
 
     def __str__(self):
-        return f'beta={self.p_beta}_gamma={self.p_gamma}_mu={self.p_mu}_kappa={self.p_kappa}'
+        return f'beta={self.p_beta}_gamma={self.p_gamma}_mu={self.p_mu}_kappa={self.p_kappa}_omega={self.p_omega}_zeta={self.p_zeta}'
 
 
 @dataclass
@@ -47,14 +53,12 @@ class QVoterParameters:
 
     p_p: probability that agent acts individually
 
-    p_epsilon: probability that agent change his opinion, when `q` neighbours do not have unanimity opinion.
     """
     q: int
     p_p: float
-    p_epsilon: float
 
     def __str__(self):
-        return f'q={self.q}_p={self.p_p}_epsilon={self.p_epsilon}'
+        return f'q={self.q}_p={self.p_p}'
 
 
 @dataclass

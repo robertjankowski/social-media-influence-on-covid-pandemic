@@ -164,9 +164,6 @@ def _voter_act_conformity(random_node, l2_layer: nx.Graph, l2_voter_params: QVot
         l2.set_positive_opinion(l2_layer, random_node)
     elif neighbours_opinions == -len(neighbours):
         l2.set_negative_opinion(l2_layer, random_node)
-    else:
-        if random.random() < l2_voter_params.p_epsilon:
-            l2.flip_opinion(l2_layer, random_node)
 
 
 def _epidemic_layer_step(random_node, l1_layer: nx.Graph, l2_layer: nx.Graph, l1_params: PhysicalLayerParameters):
@@ -174,6 +171,8 @@ def _epidemic_layer_step(random_node, l1_layer: nx.Graph, l2_layer: nx.Graph, l1
     age = l1.get_age(l1_layer, random_node)
     gender = l1.get_gender(l1_layer, random_node)
     opinion = l2.get_opinion(l2_layer, random_node)
+    is_disease_A = l1.get_comorbid_disease_A(l1_layer, random_node)
+    is_disease_B = l1.get_comorbid_disease_B(l1_layer, random_node)
 
     if l1_node_status == 'S':
         # Check whether any neighbour is infected
@@ -186,10 +185,15 @@ def _epidemic_layer_step(random_node, l1_layer: nx.Graph, l2_layer: nx.Graph, l1
         if l2.get_status(l2_layer, random_node) == 'U':
             l2.set_aware(l2_layer, random_node)
 
-        if random.random() < _get_combined_gamma_probability(l1_params.p_gamma, opinion):
+        if random.random() < _get_combined_gamma_probability(l1_params.p_gamma, opinion):  # I -> Q
             l1.set_quarantined(l1_layer, random_node)
+        elif random.random() < _get_combined_omega_probability(l1_params.p_omega):  # I -> R
+            l1.set_recovered(l1_layer, random_node)
+        elif random.random() < _get_combined_zeta_probability(l1_params.p_zeta):  # I -> D
+            l1.set_dead(l1_layer, random_node)
+
     elif l1_node_status == 'Q':
-        if random.random() < _get_combined_mu_probability(l1_params.p_mu, age, opinion):
+        if random.random() < _get_combined_mu_probability(l1_params.p_mu, age, opinion, is_disease_A, is_disease_B):
             l1.set_recovered(l1_layer, random_node)
         else:
             l1.set_dead(l1_layer, random_node)
@@ -236,7 +240,7 @@ def _get_combined_gamma_probability(p_gamma: float, opinion: int):
     return p_gamma * opinion_rate
 
 
-def _get_combined_mu_probability(p_mu: float, age: int, opinion: int):
+def _get_combined_mu_probability(p_mu: float, age: int, opinion: int, is_disease_A: bool, is_disease_B: bool):
     """
     Decrease probability of recovery based on age death rate ratio and
     when agent has negative opinion when it comes to staying in quarantine.
@@ -245,6 +249,8 @@ def _get_combined_mu_probability(p_mu: float, age: int, opinion: int):
     :param p_mu:
     :param age:
     :param opinion:
+    :param is_disease_A:
+    :param is_disease_B:
     """
     death_rate = death_rate_ratio(age)
 
@@ -252,4 +258,33 @@ def _get_combined_mu_probability(p_mu: float, age: int, opinion: int):
         opinion_rate = 1.0
     elif opinion == -1:
         opinion_rate = 0.5
-    return p_mu * opinion_rate * (1 - death_rate)
+
+    # TODO: implement how the comoribidities works !!!
+    #  Temporary solution:
+    comoribidities_rate = 1.0
+    if is_disease_A and is_disease_B:
+        comoribidities_rate *= 3
+    elif is_disease_A:
+        comoribidities_rate *= 2
+    elif is_disease_B:
+        comoribidities_rate *= 1.5
+
+    return p_mu * opinion_rate * (1 - death_rate) * comoribidities_rate
+
+
+def _get_combined_omega_probability(p_omega):
+    """
+    TODO
+
+    :param p_omega:
+    """
+    return p_omega
+
+
+def _get_combined_zeta_probability(p_zeta):
+    """
+    TODO:
+
+    :param p_zeta:
+    """
+    return p_zeta

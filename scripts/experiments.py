@@ -7,9 +7,9 @@ from scripts.parameters import *
 from scripts.epidemic_metrics import *
 from scripts.virtual_metrics import *
 
-DEFAULT_L1_PARAMS = PhysicalLayerParameters(0.2, 0.6, 0.999)
+DEFAULT_L1_PARAMS = PhysicalLayerParameters(0.2, 0.6, 0.999, 0.8, 0.2)
 DEFAULT_L2_PARAMS = VirtualLayerParameters(0.4, 0.6)
-DEFAULT_L2_VOTER_PARAMS = QVoterParameters(4, 0.1, 0.3)
+DEFAULT_L2_VOTER_PARAMS = QVoterParameters(4, 0.1)
 DEFAULT_L2_SOCIAL_MEDIA_PARAMS = SocialMediaParameters(0.1, 1)
 
 metrics = {'aware_ratio': ('l2_layer', aware_ratio),
@@ -58,7 +58,7 @@ def beta_lambda_dead_experiment(resolution=100):
     lambdas = np.linspace(0, 1, resolution)
     metrics = {'dead_ratio': ('l1_layer', dead_ratio), 'recovered_ratio': ('l1_layer', recovered_ratio)}
 
-    l2_voter_params = QVoterParameters(4, 0.5, 0.3)
+    l2_voter_params = QVoterParameters(4, 0.5)
     l2_social_media_params = SocialMediaParameters(1e-10, 1e10)  # I remove social media
     dead_ratio_output = []
     recovered_ratio_output = []
@@ -66,7 +66,7 @@ def beta_lambda_dead_experiment(resolution=100):
         dead_ratio_output_part = []
         recovered_ratio_output_part = []
         for l in lambdas:
-            l1_params = PhysicalLayerParameters(b, 0.6, 0.9)
+            l1_params = PhysicalLayerParameters(b, 0.6, 0.9, 0.8, 0.1)
             l2_params = VirtualLayerParameters(l, 0.4)
 
             out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
@@ -93,7 +93,7 @@ def gamma_lambda_dead_experiment(resolution=100):
     lambdas = np.linspace(0, 1, resolution)
     metrics = {'dead_ratio': ('l1_layer', dead_ratio), 'recovered_ratio': ('l1_layer', recovered_ratio)}
 
-    l2_voter_params = QVoterParameters(4, 0.5, 0.3)
+    l2_voter_params = QVoterParameters(4, 0.5)
     l2_social_media_params = SocialMediaParameters(1e-10, 1e10)  # I remove social media
     dead_ratio_output = []
     recovered_ratio_output = []
@@ -101,7 +101,7 @@ def gamma_lambda_dead_experiment(resolution=100):
         dead_ratio_output_part = []
         recovered_ratio_output_part = []
         for l in lambdas:
-            l1_params = PhysicalLayerParameters(0.3, g, 0.9)
+            l1_params = PhysicalLayerParameters(0.3, g, 0.9, 0.8, 0.1)
             l2_params = VirtualLayerParameters(l, 0.4)
 
             out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
@@ -137,8 +137,8 @@ def gamma_p_dead_experiment(resolution=100):
         dead_ratio_output_part = []
         recovered_ratio_output_part = []
         for p in ps:
-            l1_params = PhysicalLayerParameters(0.3, g, 0.9)
-            l2_voter_params = QVoterParameters(4, p, 0.3)
+            l1_params = PhysicalLayerParameters(0.3, g, 0.9, 0.8, 0.1)
+            l2_voter_params = QVoterParameters(4, p)
 
             out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
                                               INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, l2_voter_params,
@@ -163,9 +163,9 @@ def social_media_experiment(resolution=10, n_repeat_step=10):
     xis = np.linspace(0, 1, resolution)
 
     metrics = {'dead_ratio': ('l1_layer', dead_ratio), 'recovered_ratio': ('l1_layer', recovered_ratio)}
-    l1_params = PhysicalLayerParameters(0.2, 0.6, 0.9)
+    l1_params = PhysicalLayerParameters(0.2, 0.6, 0.9, 0.8, 0.1)
     l2_params = VirtualLayerParameters(0.3, 0.4)
-    l2_voter_params = QVoterParameters(4, 0.5, 0.3)
+    l2_voter_params = QVoterParameters(4, 0.5)
 
     dead_ratio_output = []
     recovered_ratio_output = []
@@ -200,7 +200,7 @@ def q_voter_experiment(qs: list, n_runs=10):
     metrics = {'dead_ratio': ('l1_layer', dead_ratio),
                'recovered_ratio': ('l1_layer', recovered_ratio),
                'infected_ratio': ('l1_layer', infected_ratio)}
-    l1_params = PhysicalLayerParameters(0.2, 0.6, 0.9)
+    l1_params = PhysicalLayerParameters(0.2, 0.6, 0.9, 0.8, 0.1)
     l2_params = VirtualLayerParameters(0.3, 0.4)
     l2_social_media_params = SocialMediaParameters(0, 1e10)
 
@@ -212,7 +212,7 @@ def q_voter_experiment(qs: list, n_runs=10):
         rr = []
         ir = []
         for _ in range(n_runs):
-            l2_voter_params = QVoterParameters(q, 0.5, 0.3)
+            l2_voter_params = QVoterParameters(q, 0.5)
 
             out, _, _ = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
                                             INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, l2_voter_params,
@@ -242,7 +242,7 @@ def experiment1(qs: list, ps: list, filename: str, n_runs=10):
     metrics = {'dead_ratio': ('l1_layer', dead_ratio),
                'recovered_ratio': ('l1_layer', recovered_ratio),
                'infected_ratio': ('l1_layer', infected_ratio)}
-    l1_params = PhysicalLayerParameters(0.05, 0.1, 0.8)
+    l1_params = PhysicalLayerParameters(0.05, 0.1, 0.8, 0.8, 0.1)
     l2_params = VirtualLayerParameters(0.01, 0.1)
     l2_social_media_params = SocialMediaParameters(1e10, 1e-10)
 
@@ -253,7 +253,7 @@ def experiment1(qs: list, ps: list, filename: str, n_runs=10):
             dr = []
             ir = []
             for _ in range(n_runs):
-                voter_params = QVoterParameters(q, p, 0.3)
+                voter_params = QVoterParameters(q, p)
 
                 out, _, _ = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
                                                 INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, voter_params,
@@ -284,9 +284,9 @@ def format_parameters(l1_params: PhysicalLayerParameters,
 def experiment2(xis: list, ns: list, filename: str, n_runs=10):
     metrics = {'dead_ratio': ('l1_layer', dead_ratio),
                'infected_ratio': ('l1_layer', infected_ratio)}
-    l1_params = PhysicalLayerParameters(0.5, 0.2, 0.85)
+    l1_params = PhysicalLayerParameters(0.5, 0.2, 0.85, 0.8, 0.1)
     l2_params = VirtualLayerParameters(0.01, 0.99)
-    l2_voter_params = QVoterParameters(4, 0.5, 0.3)
+    l2_voter_params = QVoterParameters(4, 0.5)
     print(l1_params, l2_params, l2_voter_params)
     out_dr = {}
     out_ir = {}
@@ -320,5 +320,5 @@ def format_parameters_e2(l1_params: PhysicalLayerParameters,
                          l2_params: VirtualLayerParameters,
                          l2_voter_params: QVoterParameters):
     l1 = f'L1-beta={l1_params.p_beta}_gamma={l1_params.p_gamma}_kappa={l1_params.p_kappa}_mu={l1_params.p_mu}'
-    l2 = f'_L2-delta={l2_params.p_delta}_lambda={l2_params.p_lambda}_q={l2_voter_params.q}_p={l2_voter_params.p_p}_epsilon={l2_voter_params.p_epsilon}'
+    l2 = f'_L2-delta={l2_params.p_delta}_lambda={l2_params.p_lambda}_q={l2_voter_params.q}_p={l2_voter_params.p_p}'
     return l1 + l2

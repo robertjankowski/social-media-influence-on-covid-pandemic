@@ -1,4 +1,5 @@
 import itertools
+import math
 import multiprocessing as mp
 import time
 from collections import ChainMap
@@ -77,9 +78,14 @@ def run_parallel(params1: list,
 
     params_all = list(itertools.product(params1, params2))
     cpus = mp.cpu_count()
+    length = math.ceil(len(params_all) / cpus)
     params_chunks = []
-    for i in range(cpus, len(params_all) + cpus, cpus):
-        params_chunks.append(params_all[i - cpus:i])
+    for i in range(cpus):
+        start_idx = i * length
+        end_idx = (i + 1) * length
+        to_add = params_all[start_idx:end_idx]
+        if len(to_add) > 0:
+            params_chunks.append(to_add)
 
     all_parameters = {
         'constants': updated_constants,
@@ -122,7 +128,7 @@ def example_experiment(qs_ps: list, params: dict):
         dead_rate = []
         infected_rate = []
         for _ in range(params['n_runs']):
-            q_voter_parameters = QVoterParameters(q, p, constants.l2_voter_params.p_epsilon)
+            q_voter_parameters = QVoterParameters(q, p)
 
             out, _, _ = init_run_simulation(constants.n_agents,
                                             constants.n_additional_virtual_links,
@@ -144,7 +150,7 @@ def example_experiment(qs_ps: list, params: dict):
 
 
 if __name__ == '__main__':
-    qs = [3, 4, 5]
+    qs = [3, 4, 5, 6, 7]
     ps = [0.1, 0.2, 0.3, 0.4]
-    run_parallel(qs, ps, 'p_q', example_experiment, l1_params=PhysicalLayerParameters(0.4, 0.2, 0.1),
-                 n_agents=10, n_steps=1000)
+    run_parallel(qs, ps, 'p_q', example_experiment, l1_params=PhysicalLayerParameters(0.4, 0.2, 0.1, 0.8, 0.2),
+                 n_agents=100, n_steps=10000)
