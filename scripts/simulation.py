@@ -189,7 +189,8 @@ def _epidemic_layer_step(random_node, l1_layer: nx.Graph, l2_layer: nx.Graph, l1
             l1.set_quarantined(l1_layer, random_node)
         elif random.random() < _get_combined_omega_probability(l1_params.p_omega):  # I -> R
             l1.set_recovered(l1_layer, random_node)
-        elif random.random() < _get_combined_zeta_probability(l1_params.p_zeta):  # I -> D
+        elif random.random() < _get_combined_zeta_probability(l1_params.p_zeta, age, opinion, is_disease_A,
+                                                              is_disease_B):  # I -> D
             l1.set_dead(l1_layer, random_node)
 
     elif l1_node_status == 'Q':
@@ -269,22 +270,41 @@ def _get_combined_mu_probability(p_mu: float, age: int, opinion: int, is_disease
     elif is_disease_B:
         comoribidities_rate *= 1.5
 
-    return p_mu * opinion_rate * (1 - death_rate) * comoribidities_rate
+    return p_mu * opinion_rate * (1 - death_rate) / comoribidities_rate
 
 
 def _get_combined_omega_probability(p_omega):
     """
-    TODO
+    I -> R
 
     :param p_omega:
     """
     return p_omega
 
 
-def _get_combined_zeta_probability(p_zeta):
+def _get_combined_zeta_probability(p_zeta, age: int, opinion: int, is_disease_A: bool, is_disease_B: bool):
     """
-    TODO:
+    I -> D
 
     :param p_zeta:
+    :param age:
+    :param opinion:
+    :param is_disease_A:
+    :param is_disease_B:
+    :return:
     """
-    return p_zeta
+    death_rate = death_rate_ratio(age)
+    if opinion == 1:
+        opinion_rate = 0.5
+    elif opinion == -1:
+        opinion_rate = 1.0
+
+    comoribidities_rate = 1.0
+    if is_disease_A and is_disease_B:
+        comoribidities_rate *= 3
+    elif is_disease_A:
+        comoribidities_rate *= 2
+    elif is_disease_B:
+        comoribidities_rate *= 1.5
+
+    return p_zeta * death_rate * opinion_rate * comoribidities_rate
