@@ -1,5 +1,6 @@
 import random
 import networkx as nx
+import copy
 
 import scripts.epidemic_layer as l1
 import scripts.virtual_layer as l2
@@ -10,8 +11,6 @@ from scripts.parameters import *
 
 def init_run_simulation(n_agents: int,
                         n_additional_virtual_links: int,
-                        init_infection_fraction: float,
-                        init_aware_fraction: float,
                         steps: int,
                         l1_params: PhysicalLayerParameters,
                         l2_params: VirtualLayerParameters,
@@ -26,8 +25,6 @@ def init_run_simulation(n_agents: int,
 
     :param n_agents: number of agents in each layer
     :param n_additional_virtual_links: number of additional links in virtual layer
-    :param init_infection_fraction: initial fraction of infected agents in physical layer
-    :param init_aware_fraction: initial fraction of aware agents in virtual layer
     :param steps: number of simulation steps
     :param l1_params: parameters for l1_layer
     :param l2_params: parameters for l2_layer
@@ -42,8 +39,9 @@ def init_run_simulation(n_agents: int,
              l1_layer and l2_layer
     """
     l1_layer, l2_layer = create_bilayer_network(n_agents, n_additional_virtual_links, m=network_m, p=network_p)
-    l1_layer_init = l1.initialize_epidemic(l1_layer, init_infection_fraction)
-    l2_layer_init = l2.initialize_virtual(l2_layer, init_aware_fraction)
+    l1_layer_init = l1.initialize_epidemic(l1_layer)
+    l2_layer_init = l2.initialize_virtual(l2_layer)
+    l1_layer_init, l2_layer_init = initialize_bilayer_network(l1_layer_init, l2_layer_init)
     return run(l1_layer_init,
                l2_layer_init,
                steps,
@@ -53,6 +51,22 @@ def init_run_simulation(n_agents: int,
                l2_social_media_params,
                metrics,
                verbose)
+
+
+def initialize_bilayer_network(l1_layer, l2_layer):
+    """
+    Create only one infected and aware agent!
+
+    :param l1_layer:
+    :param l2_layer:
+    :return: l1_layer, l2_layer
+    """
+    l1_layer_copy = copy.deepcopy(l1_layer)
+    l2_layer_copy = copy.deepcopy(l2_layer)
+    infected_node = random.choice(list(range(1, nx.number_of_nodes(l1_layer_copy))))
+    l1.set_infected(l1_layer_copy, infected_node)
+    l2.set_aware(l2_layer_copy, infected_node)
+    return l1_layer_copy, l2_layer_copy
 
 
 def run(l1_layer: nx.Graph,

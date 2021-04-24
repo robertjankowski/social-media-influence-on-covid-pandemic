@@ -7,7 +7,6 @@ from scripts.age_statistics import generate_from_age_gender_distribution
 
 
 def initialize_epidemic(g: nx.Graph,
-                        infected_fraction: float,
                         comorbid_disease_A_fraction=0,
                         comorbid_disease_B_fraction=0):
     """
@@ -17,7 +16,6 @@ def initialize_epidemic(g: nx.Graph,
     Age is randomly chosen from Polish population structure and gender with 50% probability
 
     :param g: nx.Graph l1 layer
-    :param infected_fraction: fraction of infected nodes at the onset
     :return g_copy: nx.Graph l1 layer with initialized agents
     :param comorbid_disease_A_fraction: fraction of agents with comorbid disease A
     :param comorbid_disease_B_fraction: fraction of agents with comorbid disease B
@@ -29,10 +27,7 @@ def initialize_epidemic(g: nx.Graph,
     males_ages = generate_from_age_gender_distribution(g.number_of_nodes(), 'M')
     i = 0
     for node in g_copy.nodes:
-        if random.random() < infected_fraction:
-            set_infected(g_copy, node)
-        else:
-            set_susceptible(g_copy, node)
+        set_susceptible(g_copy, node)
 
         if random.random() < 0.5:
             age = females_ages[i]
@@ -106,7 +101,7 @@ def set_comorbid_disease_A(g: nx.Graph, node):
     g.nodes[node]['comorbid_A'] = True
 
 
-def set_no_comorbid_disease_A(g, node):
+def set_no_comorbid_disease_A(g: nx.Graph, node):
     g.nodes[node]['comorbid_A'] = False
 
 

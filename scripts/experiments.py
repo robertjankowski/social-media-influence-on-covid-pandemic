@@ -24,8 +24,6 @@ metrics = {'aware_ratio': ('l2_layer', aware_ratio),
 N_AGENTS = 100
 N_STEPS = 20000
 N_ADDITIONAL_VIRTUAL_LINKS = 200
-INIT_INFECTED_FRACTION = 0.05
-INIT_AWARE_FRACTION = 0.05
 
 
 def perform_simulation(l1_params=DEFAULT_L1_PARAMS,
@@ -35,8 +33,6 @@ def perform_simulation(l1_params=DEFAULT_L1_PARAMS,
     return init_run_simulation(
         N_AGENTS,
         N_ADDITIONAL_VIRTUAL_LINKS,
-        INIT_INFECTED_FRACTION,
-        INIT_AWARE_FRACTION,
         N_STEPS,
         l1_params,
         l2_params,
@@ -69,8 +65,8 @@ def beta_lambda_dead_experiment(resolution=100):
             l1_params = PhysicalLayerParameters(b, 0.6, 0.9, 0.8, 0.1)
             l2_params = VirtualLayerParameters(l, 0.4)
 
-            out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
-                                              INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, l2_voter_params,
+            out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS,
+                                              N_STEPS, l1_params, l2_params, l2_voter_params,
                                               l2_social_media_params, metrics)
 
             dead_ratio_output_part.append(out['dead_ratio'][-1])
@@ -104,8 +100,8 @@ def gamma_lambda_dead_experiment(resolution=100):
             l1_params = PhysicalLayerParameters(0.3, g, 0.9, 0.8, 0.1)
             l2_params = VirtualLayerParameters(l, 0.4)
 
-            out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
-                                              INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, l2_voter_params,
+            out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS,
+                                              N_STEPS, l1_params, l2_params, l2_voter_params,
                                               l2_social_media_params, metrics)
 
             dead_ratio_output_part.append(out['dead_ratio'][-1])
@@ -140,8 +136,8 @@ def gamma_p_dead_experiment(resolution=100):
             l1_params = PhysicalLayerParameters(0.3, g, 0.9, 0.8, 0.1)
             l2_voter_params = QVoterParameters(4, p)
 
-            out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
-                                              INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, l2_voter_params,
+            out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS,
+                                              N_STEPS, l1_params, l2_params, l2_voter_params,
                                               l2_social_media_params, metrics)
 
             dead_ratio_output_part.append(out['dead_ratio'][-1])
@@ -180,8 +176,8 @@ def social_media_experiment(resolution=10, n_repeat_step=10):
             for _ in range(n_repeat_step):
                 l2_social_media_params = SocialMediaParameters(xi, n)
 
-                out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
-                                                  INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, l2_voter_params,
+                out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS,
+                                                  N_STEPS, l1_params, l2_params, l2_voter_params,
                                                   l2_social_media_params, metrics)
 
                 dead_ratio_output_part.append(out['dead_ratio'][-1])
@@ -214,8 +210,8 @@ def q_voter_experiment(qs: list, n_runs=10):
         for _ in range(n_runs):
             l2_voter_params = QVoterParameters(q, 0.5)
 
-            out, _, _ = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
-                                            INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, l2_voter_params,
+            out, _, _ = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS,
+                                            N_STEPS, l1_params, l2_params, l2_voter_params,
                                             l2_social_media_params, metrics)
 
             dr.append(out['dead_ratio'][-1])
@@ -255,8 +251,8 @@ def experiment1(qs: list, ps: list, filename: str, n_runs=10):
             for _ in range(n_runs):
                 voter_params = QVoterParameters(q, p)
 
-                out, _, _ = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
-                                                INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, voter_params,
+                out, _, _ = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS,
+                                                N_STEPS, l1_params, l2_params, voter_params,
                                                 l2_social_media_params, metrics)
                 dr.append(out['dead_ratio'][-1])
                 ir.append(max(out['infected_ratio']))
@@ -297,8 +293,8 @@ def experiment2(xis: list, ns: list, filename: str, n_runs=10):
             for _ in range(n_runs):
                 social_parameters = SocialMediaParameters(xi, n)
 
-                out, _, _ = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS, INIT_INFECTED_FRACTION,
-                                                INIT_AWARE_FRACTION, N_STEPS, l1_params, l2_params, l2_voter_params,
+                out, _, _ = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS,
+                                                N_STEPS, l1_params, l2_params, l2_voter_params,
                                                 social_parameters, metrics)
 
                 dr.append(out['dead_ratio'][-1])

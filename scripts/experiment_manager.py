@@ -26,10 +26,9 @@ def run_parallel(params1: list,
                  n_agents: int = None,
                  n_steps: int = None,
                  n_additional_virtual_links: int = None,
-                 init_infection_fraction: float = None,
-                 init_aware_fraction: float = None,
                  constants: SimulationConstants = SimulationConstants(),
-                 n_runs=100):
+                 n_runs=100,
+                 cpus=mp.cpu_count()):
     """
     Perform simulations in parallel
 
@@ -45,10 +44,9 @@ def run_parallel(params1: list,
     :param n_agents:
     :param n_steps:
     :param n_additional_virtual_links:
-    :param init_infection_fraction:
-    :param init_aware_fraction:
     :param constants:
-    :param n_runs: number of simulations
+    :param n_runs: number of realizations of each run
+    :param cpus: number of threads (default max number)
     """
     if metrics is None:
         metrics = {'dead_ratio': ('l1_layer', dead_ratio),
@@ -67,17 +65,11 @@ def run_parallel(params1: list,
         n_steps = constants.N_STEPS
     if n_additional_virtual_links is None:
         n_additional_virtual_links = constants.N_ADDITIONAL_VIRTUAL_LINKS
-    if init_aware_fraction is None:
-        init_aware_fraction = constants.INIT_AWARE_FRACTION
-    if init_infection_fraction is None:
-        init_infection_fraction = constants.INIT_INFECTED_FRACTION
 
-    updated_constants = SimulationConstants(n_agents, n_steps, n_additional_virtual_links, init_infection_fraction,
-                                            init_aware_fraction, l1_params, l2_params, l2_voter_params,
-                                            l2_social_media_params)
+    updated_constants = SimulationConstants(n_agents, n_steps, n_additional_virtual_links, l1_params,
+                                            l2_params, l2_voter_params, l2_social_media_params)
 
     params_all = list(itertools.product(params1, params2))
-    cpus = mp.cpu_count()
     length = math.ceil(len(params_all) / cpus)
     params_chunks = []
     for i in range(cpus):
@@ -132,8 +124,6 @@ def example_experiment(qs_ps: list, params: dict):
 
             out, _, _ = init_run_simulation(constants.n_agents,
                                             constants.n_additional_virtual_links,
-                                            constants.init_infection_fraction,
-                                            constants.init_aware_fraction,
                                             constants.n_steps,
                                             constants.l1_params,
                                             constants.l2_params,
@@ -153,4 +143,4 @@ if __name__ == '__main__':
     qs = [3, 4, 5, 6, 7]
     ps = [0.1, 0.2, 0.3, 0.4]
     run_parallel(qs, ps, 'p_q', example_experiment, l1_params=PhysicalLayerParameters(0.4, 0.2, 0.1, 0.8, 0.2),
-                 n_agents=100, n_steps=10000)
+                 n_agents=100, n_steps=1000, cpus=8)
