@@ -2,21 +2,6 @@ from dataclasses import dataclass
 
 
 @dataclass
-class VirtualLayerParameters:
-    """Parameters of simulation for $$l_2$$ (communication) layer
-
-    p_lambda: probability of agent to become aware of epidemic (U -> A)
-
-    p_delta: probability of agent to forget about epidemic (A -> U)
-    """
-    p_lambda: float
-    p_delta: float
-
-    def __str__(self):
-        return f'lambda={self.p_lambda}_delta={self.p_delta}'
-
-
-@dataclass
 class PhysicalLayerParameters:
     """Parameters of simulation for $$l_1$$ (epidemic) layer
 

@@ -56,4 +56,9 @@ def degree_node_size(g: nx.Graph, scale=10):
     :param scale: float
     :return:
     """
-    return [scale * v for v in dict(g.degree).values()]
+    return degree_selected_nodes_size(g, dict(g.degree).values(), scale)
+
+
+def degree_selected_nodes_size(g: nx.Graph, nodes, scale=10):
+    sizes = dict(g.degree)
+    return [scale * sizes[node] for node in nodes]

@@ -1,11 +1,12 @@
-import matplotlib.pyplot as plt
-import networkx as nx
 import sys
+
+import matplotlib.pyplot as plt
 import seaborn as sns
 
 sys.path.append("../")
 
-from scripts.network import degree_node_size
+from scripts.network import degree_node_size, degree_selected_nodes_size
+from scripts.virtual_layer import *
 
 DEFAULT_CONFIG = {
     'font.size': 16,
@@ -42,6 +43,7 @@ def draw_network(g: nx.Graph, ax=None, pos=None, node_size_list=None, node_size_
     :param ax: matplotlib canvas
     :param pos: position of nodes (e.g. from nx.spring_layout(g))
     :param node_size_list: list of node sizes
+    :param node_size_scale: float
     :param edge_alpha: float
     :param node_border_color: float
     :param node_border_width: float
@@ -82,12 +84,11 @@ def draw_epidemic_layer(g: nx.Graph, ax=None, pos=None, node_size_scale=10, edge
         elif node_status == 'D':
             dead_nodes.append(node)
 
-    sizes = dict(g.degree)
-    susceptible_nodes_sizes = [node_size_scale * sizes[node] for node in susceptible_nodes]
-    infected_nodes_sizes = [node_size_scale * sizes[node] for node in infected_nodes]
-    quarantined_nodes_sizes = [node_size_scale * sizes[node] for node in quarantined_nodes]
-    recovered_nodes_sizes = [node_size_scale * sizes[node] for node in recovered_nodes]
-    dead_nodes_sizes = [node_size_scale * sizes[node] for node in dead_nodes]
+    susceptible_nodes_sizes = degree_selected_nodes_size(g, susceptible_nodes, node_size_scale)
+    infected_nodes_sizes = degree_selected_nodes_size(g, infected_nodes, node_size_scale)
+    quarantined_nodes_sizes = degree_selected_nodes_size(g, quarantined_nodes, node_size_scale)
+    recovered_nodes_sizes = degree_selected_nodes_size(g, recovered_nodes, node_size_scale)
+    dead_nodes_sizes = degree_selected_nodes_size(g, dead_nodes, node_size_scale)
 
     nx.draw_networkx_edges(g, ax=ax, alpha=edge_alpha, pos=pos, connectionstyle='arc3,rad=0.1',
                            arrowstyle='<->')
@@ -121,38 +122,29 @@ def draw_virtual_layer(g: nx.Graph, ax=None, pos=None, node_size_scale=10, edge_
     if pos is None:
         pos = nx.spring_layout(g)
 
-    aware_nodes = []
-    unaware_nodes = []
-    nodes_opinions = {k: v['l2_opinion'] for k, v in dict(g.nodes(data=True)).items()}
+    positive_nodes = []
+    negative_nodes = []
 
     for node in g.nodes:
-        node_status = g.nodes[node]['l2_status']
-        if node_status is None:
-            print('Node should have `l2_status` field. Exiting...')
-            return
+        node_opinion = get_opinion(g, node)
+        if node_opinion == 1:
+            positive_nodes.append(node)
+        elif node_opinion == -1:
+            negative_nodes.append(node)
 
-        if node_status == 'A':
-            aware_nodes.append(node)
-        elif node_status == 'U':
-            unaware_nodes.append(node)
-
-    sizes = dict(g.degree)
-    aware_nodes_sizes = [node_size_scale * sizes[node] for node in aware_nodes]
-    unaware_nodes_sizes = [node_size_scale * sizes[node] for node in unaware_nodes]
+    positive_node_sizes = degree_selected_nodes_size(g, positive_nodes, node_size_scale)
+    negative_nodes_sizes = degree_selected_nodes_size(g, negative_nodes, node_size_scale)
 
     nx.draw_networkx_edges(g, ax=ax, alpha=edge_alpha, pos=pos, connectionstyle='arc3,rad=0.1',
-                           arrowstyle='<->', edgelist=g.out_edges)
-    # Susceptible nodes
-    nx.draw_networkx_nodes(g, nodelist=aware_nodes, node_size=aware_nodes_sizes,
-                           node_color='violet', ax=ax, pos=pos, edgecolors=node_border_color,
-                           linewidths=node_border_width, label='aware')
-    # Infected nodes
-    nx.draw_networkx_nodes(g, nodelist=unaware_nodes, node_size=unaware_nodes_sizes,
-                           node_color='lime', ax=ax, pos=pos, edgecolors=node_border_color,
-                           linewidths=node_border_width, label='unaware')
-
-    # Opinions of the nodes
-    nx.draw_networkx_labels(g, pos=pos, ax=ax, labels=nodes_opinions, font_weight='bold', font_size=13)
+                           arrowstyle='<->', edgelist=g.edges)
+    # Positive opinions
+    nx.draw_networkx_nodes(g, nodelist=positive_nodes, node_size=positive_node_sizes,
+                           node_color='red', ax=ax, pos=pos, edgecolors=node_border_color,
+                           linewidths=node_border_width, label='+1')
+    # Negative opinions
+    nx.draw_networkx_nodes(g, nodelist=negative_nodes, node_size=negative_nodes_sizes,
+                           node_color='blue', ax=ax, pos=pos, edgecolors=node_border_color,
+                           linewidths=node_border_width, label='-1')
 
 
 def plot_heatmap(array, xtickslabels: list, ytickslabels: list, colorscale_label: str, title_label: str):

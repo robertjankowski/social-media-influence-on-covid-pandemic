@@ -19,13 +19,12 @@ def run_parallel(params1: list,
                  filename: str,
                  experiment_fun: Callable,
                  l1_params: PhysicalLayerParameters = None,
-                 l2_params: VirtualLayerParameters = None,
                  l2_voter_params: QVoterParameters = None,
                  l2_social_media_params: SocialMediaParameters = None,
                  metrics: dict = None,
                  n_agents: int = None,
                  n_steps: int = None,
-                 n_additional_virtual_links: int = None,
+                 frac_additional_virtual_links: float = None,
                  constants: SimulationConstants = SimulationConstants(),
                  n_runs=100,
                  cpus=mp.cpu_count()):
@@ -37,13 +36,12 @@ def run_parallel(params1: list,
     :param filename: output file name prefix
     :param experiment_fun: function to execute in parallel (see more in `example_experiment` function)
     :param l1_params:
-    :param l2_params:
     :param l2_voter_params:
     :param l2_social_media_params:
     :param metrics:
     :param n_agents:
     :param n_steps:
-    :param n_additional_virtual_links:
+    :param frac_additional_virtual_links:
     :param constants:
     :param n_runs: number of realizations of each run
     :param cpus: number of threads (default max number)
@@ -53,8 +51,6 @@ def run_parallel(params1: list,
                    'infected_ratio': ('l1_layer', infected_ratio)}
     if l1_params is None:
         l1_params = constants.L1_DEFAULT_PARAMS
-    if l2_params is None:
-        l2_params = constants.L2_DEFAULT_PARAMS
     if l2_voter_params is None:
         l2_voter_params = constants.L2_VOTER_DEFAULT_PARAMS
     if l2_social_media_params is None:
@@ -63,11 +59,11 @@ def run_parallel(params1: list,
         n_agents = constants.N_AGENTS
     if n_steps is None:
         n_steps = constants.N_STEPS
-    if n_additional_virtual_links is None:
-        n_additional_virtual_links = constants.N_ADDITIONAL_VIRTUAL_LINKS
+    if frac_additional_virtual_links is None:
+        frac_additional_virtual_links = constants.FRAC_ADDITIONAL_VIRTUAL_LINKS
 
-    updated_constants = SimulationConstants(n_agents, n_steps, n_additional_virtual_links, l1_params,
-                                            l2_params, l2_voter_params, l2_social_media_params)
+    updated_constants = SimulationConstants(n_agents, n_steps, frac_additional_virtual_links,
+                                            l1_params, l2_voter_params, l2_social_media_params)
 
     params_all = list(itertools.product(params1, params2))
     length = math.ceil(len(params_all) / cpus)
@@ -96,9 +92,8 @@ def run_parallel(params1: list,
 
     output_dead_rate = dict(ChainMap(*output_dead_rate))
     output_infected_rate = dict(ChainMap(*output_infected_rate))
-    parameters_name = filename + '_' + format_parameters(l1_params, l2_params, l2_voter_params,
-                                                         l2_social_media_params, n_runs, n_steps, n_agents,
-                                                         n_additional_virtual_links) + '.csv'
+    parameters_name = filename + '_' + format_parameters(l1_params, l2_voter_params, l2_social_media_params,
+                                                         n_runs, n_steps, n_agents, frac_additional_virtual_links) + '.csv'
     save_results(output_dead_rate, output_infected_rate, params1, params2, parameters_name)
     end = time.time()
     print(f'Elapsed: {end - start} s')
@@ -126,7 +121,6 @@ def example_experiment(qs_ps: list, params: dict):
                                             constants.n_additional_virtual_links,
                                             constants.n_steps,
                                             constants.l1_params,
-                                            constants.l2_params,
                                             q_voter_parameters,
                                             constants.l2_social_media_params,
                                             params['metrics'])

@@ -16,30 +16,15 @@ def initialize_virtual(g: nx.Graph, negative_opinion_fraction: float = 0.5):
     """
     g_copy = copy.deepcopy(g)
     for node in g_copy.nodes:
-        set_unaware(g_copy, node)
-
         if random.random() < negative_opinion_fraction:
             set_negative_opinion(g_copy, node)
         else:
             set_positive_opinion(g_copy, node)
-
     return g_copy
-
-
-def _set_status(g: nx.Graph, node, status: str):
-    g.nodes[node]['l2_status'] = status
 
 
 def _set_opinion(g: nx.Graph, node, opinion: int):
     g.nodes[node]['l2_opinion'] = opinion
-
-
-def set_aware(g: nx.Graph, node):
-    _set_status(g, node, 'A')
-
-
-def set_unaware(g: nx.Graph, node):
-    _set_status(g, node, 'U')
 
 
 def set_positive_opinion(g: nx.Graph, node):
@@ -48,10 +33,6 @@ def set_positive_opinion(g: nx.Graph, node):
 
 def set_negative_opinion(g: nx.Graph, node):
     _set_opinion(g, node, -1)
-
-
-def get_status(g: nx.Graph, node):
-    return g.nodes[node]['l2_status']
 
 
 def get_opinion(g: nx.Graph, node):
