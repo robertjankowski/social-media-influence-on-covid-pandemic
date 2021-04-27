@@ -61,4 +61,4 @@ def degree_node_size(g: nx.Graph, scale=10):
 
 def degree_selected_nodes_size(g: nx.Graph, nodes, scale=10):
     sizes = dict(g.degree)
-    return [scale * sizes[node] for node in nodes]
+    return [scale * (sizes[node] + 1) for node in nodes]

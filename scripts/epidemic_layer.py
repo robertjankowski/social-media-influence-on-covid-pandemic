@@ -48,6 +48,7 @@ def initialize_epidemic(g: nx.Graph,
 
         set_age(g_copy, node, age)
         set_gender(g_copy, node, gender)
+        set_infected_time(g_copy, node, 0)
         i += 1
 
     return g_copy
@@ -119,3 +120,18 @@ def get_comorbid_disease_A(g: nx.Graph, node):
 
 def get_comorbid_disease_B(g: nx.Graph, node):
     return g.nodes[node]['comorbid_B']
+
+
+def set_infected_time(g: nx.Graph, node, value):
+    g.nodes[node]['I_time'] = value
+
+
+def increment_infected_time(g: nx.Graph, node, opinion):
+    if opinion == 1:
+        g.nodes[node]['I_time'] += 5
+    elif opinion == -1:
+        g.nodes[node]['I_time'] += 1
+
+
+def get_infected_time(g: nx.Graph, node):
+    return g.nodes[node]['I_time']

@@ -134,5 +134,5 @@ def example_experiment(qs_ps: list, params: dict):
 if __name__ == '__main__':
     qs = [3, 4, 5, 6, 7]
     ps = [0.1, 0.2, 0.3, 0.4]
-    run_parallel(qs, ps, 'p_q', example_experiment, l1_params=PhysicalLayerParameters(0.4, 0.2, 0.9, 0.05),
+    run_parallel(qs, ps, 'p_q', example_experiment, l1_params=PhysicalLayerParameters(0.4, 0.2, 0.9, 0.05, 10),
                  n_agents=100, n_steps=1000, cpus=8)

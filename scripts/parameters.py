@@ -12,14 +12,17 @@ class PhysicalLayerParameters:
     p_mu: probability that agent recovers from an illness (Q -> R)
 
     p_kappa: probability that agent dies (Q -> D)
+
+    max_infected_time: number of timestamp spends in `I` state (depends on opinion)
     """
     p_beta: float
     p_gamma: float
     p_mu: float
     p_kappa: float
+    max_infected_time: int
 
     def __str__(self):
-        return f'beta={self.p_beta}_gamma={self.p_gamma}_mu={self.p_mu}_kappa={self.p_kappa}'
+        return f'beta={self.p_beta}_gamma={self.p_gamma}_mu={self.p_mu}_kappa={self.p_kappa}_max_infected_time={self.max_infected_time}'
 
 
 @dataclass

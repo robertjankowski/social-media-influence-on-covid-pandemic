@@ -185,18 +185,23 @@ def _epidemic_layer_step(random_node, l1_layer: nx.Graph, l2_layer: nx.Graph, l1
                     l1.set_infected(l1_layer, random_node)
                     break
     elif l1_node_status == 'I':
-        if random.random() < _get_combined_gamma_probability(l1_params.p_gamma):  # I -> Q
-            l1.set_quarantined(l1_layer, random_node)
-        elif random.random() < _get_combined_kappa_probability(l1_params.p_kappa):  # I -> R
-            l1.set_recovered(l1_layer, random_node)
-        elif random.random() < _get_combined_mu_probability(l1_params.p_mu, age, is_disease_A,
-                                                            is_disease_B):  # I -> D
-            l1.set_dead(l1_layer, random_node)
+        l1.increment_infected_time(l1_layer, random_node, opinion)
+        if l1.get_infected_time(l1_layer, random_node) >= l1_params.max_infected_time:
+            if random.random() < _get_combined_gamma_probability(l1_params.p_gamma):  # I -> Q
+                l1.set_quarantined(l1_layer, random_node)
+                # remove all links if agent goes into quarantined state
+                links = list(l1_layer.edges(random_node))
+                l1_layer.remove_edges_from(links)
+            elif random.random() < _get_combined_kappa_probability(l1_params.p_kappa, age):  # I -> R
+                l1.set_recovered(l1_layer, random_node)
+            elif random.random() < _get_combined_mu_probability(l1_params.p_mu, age, is_disease_A,
+                                                                is_disease_B):  # I -> D
+                l1.set_dead(l1_layer, random_node)
 
     elif l1_node_status == 'Q':
         if random.random() < _get_combined_mu_probability(l1_params.p_mu, age, is_disease_A, is_disease_B):
             l1.set_recovered(l1_layer, random_node)
-        elif random.random() < _get_combined_kappa_probability(l1_params.p_kappa):
+        elif random.random() < _get_combined_kappa_probability(l1_params.p_kappa, age):
             l1.set_dead(l1_layer, random_node)
 
 
@@ -246,10 +251,11 @@ def _get_combined_mu_probability(p_mu: float, age: int, is_disease_A: bool, is_d
     return p_mu * (1 - death_rate) / comoribidities_rate
 
 
-def _get_combined_kappa_probability(p_omega):
+def _get_combined_kappa_probability(p_kappa, age):
     """
-    I -> R
+    I -> R, Q -> R
 
-    :param p_omega:
+    :param p_kappa:
     """
-    return p_omega
+    death_rate = death_rate_ratio(age)
+    return p_kappa * death_rate
