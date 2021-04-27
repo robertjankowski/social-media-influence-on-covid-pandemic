@@ -173,7 +173,6 @@ def _voter_act_conformity(random_node, l2_layer: nx.Graph, l2_voter_params: QVot
 def _epidemic_layer_step(random_node, l1_layer: nx.Graph, l2_layer: nx.Graph, l1_params: PhysicalLayerParameters):
     l1_node_status = l1.get_status(l1_layer, random_node)
     age = l1.get_age(l1_layer, random_node)
-    gender = l1.get_gender(l1_layer, random_node)
     opinion = l2.get_opinion(l2_layer, random_node)
     is_disease_A = l1.get_comorbid_disease_A(l1_layer, random_node)
     is_disease_B = l1.get_comorbid_disease_B(l1_layer, random_node)
@@ -182,71 +181,50 @@ def _epidemic_layer_step(random_node, l1_layer: nx.Graph, l2_layer: nx.Graph, l1
         # Check whether any neighbour is infected
         for neighbour in l1_layer.neighbors(random_node):
             if l1.get_status(l1_layer, neighbour) == 'I':
-                if random.random() < _get_combined_beta_probability(l1_params.p_beta, age, gender):
+                if random.random() < _get_combined_beta_probability(l1_params.p_beta, opinion):
                     l1.set_infected(l1_layer, random_node)
                     break
     elif l1_node_status == 'I':
-        if random.random() < _get_combined_gamma_probability(l1_params.p_gamma, opinion):  # I -> Q
+        if random.random() < _get_combined_gamma_probability(l1_params.p_gamma):  # I -> Q
             l1.set_quarantined(l1_layer, random_node)
-        elif random.random() < _get_combined_omega_probability(l1_params.p_omega):  # I -> R
+        elif random.random() < _get_combined_kappa_probability(l1_params.p_kappa):  # I -> R
             l1.set_recovered(l1_layer, random_node)
-        elif random.random() < _get_combined_zeta_probability(l1_params.p_zeta, age, opinion, is_disease_A,
-                                                              is_disease_B):  # I -> D
+        elif random.random() < _get_combined_mu_probability(l1_params.p_mu, age, is_disease_A,
+                                                            is_disease_B):  # I -> D
             l1.set_dead(l1_layer, random_node)
 
     elif l1_node_status == 'Q':
-        if random.random() < _get_combined_mu_probability(l1_params.p_mu, age, opinion, is_disease_A, is_disease_B):
+        if random.random() < _get_combined_mu_probability(l1_params.p_mu, age, is_disease_A, is_disease_B):
             l1.set_recovered(l1_layer, random_node)
-        else:
+        elif random.random() < _get_combined_kappa_probability(l1_params.p_kappa):
             l1.set_dead(l1_layer, random_node)
 
 
-def _get_combined_beta_probability(p_beta: float, age: int, gender: str):
+def _get_combined_beta_probability(p_beta: float, opinion):
     """
-    Based on: https://publications.jrc.ec.europa.eu/repository/bitstream/JRC120680/gender_territory_covid19_online.pdf
-
-    Children are more likely to spread disease (e.g. school, colleagues).
-    Women are more likely to get infected due to the fact that more women are working in the health sector.
-
     :param p_beta:
-    :param age:
-    :param gender:
+    :param opinion: positive opinion reduce the probability of infection
     :return: combined infected probability
     """
-    if age < 30:
-        age_rate = 1.1
-    else:
-        age_rate = 0.9
+    opinion_rate = 1
+    if opinion == 1:
+        opinion_rate /= 2
 
-    if gender == 'F':
-        gender_rate = 1.0  # For now gender does not modify any probability
-    elif gender == 'M':
-        gender_rate = 1.0
-
-    return p_beta * age_rate * gender_rate
+    return p_beta * opinion_rate
 
 
-def _get_combined_gamma_probability(p_gamma: float, opinion: int):
+def _get_combined_gamma_probability(p_gamma: float):
     """
-    Decrease probability (I -> Q) when agent has negative opinion when it comes to social distancing
 
     :param p_gamma:
-    :param opinion:
     :return:
     """
-    if opinion == 1:
-        opinion_rate = 1.0
-    elif opinion == -1:
-        opinion_rate = 0.5
-
-    return p_gamma * opinion_rate
+    return p_gamma
 
 
-def _get_combined_mu_probability(p_mu: float, age: int, opinion: int, is_disease_A: bool, is_disease_B: bool):
+def _get_combined_mu_probability(p_mu: float, age: int, is_disease_A: bool, is_disease_B: bool):
     """
-    Decrease probability of recovery based on age death rate ratio and
-    when agent has negative opinion when it comes to staying in quarantine.
-
+    Decrease probability of recovery based on age death rate ratio.
 
     :param p_mu:
     :param age:
@@ -256,56 +234,22 @@ def _get_combined_mu_probability(p_mu: float, age: int, opinion: int, is_disease
     """
     death_rate = death_rate_ratio(age)
 
-    if opinion == 1:
-        opinion_rate = 1.0
-    elif opinion == -1:
-        opinion_rate = 0.5
-
-    # TODO: implement how the comoribidities works !!!
-    #  Temporary solution:
+    # TODO: For not we neglect the comorbidity
     comoribidities_rate = 1.0
     if is_disease_A and is_disease_B:
-        comoribidities_rate *= 3
+        comoribidities_rate *= 1
     elif is_disease_A:
-        comoribidities_rate *= 2
+        comoribidities_rate *= 1
     elif is_disease_B:
-        comoribidities_rate *= 1.5
+        comoribidities_rate *= 1
 
-    return p_mu * opinion_rate * (1 - death_rate) / comoribidities_rate
+    return p_mu * (1 - death_rate) / comoribidities_rate
 
 
-def _get_combined_omega_probability(p_omega):
+def _get_combined_kappa_probability(p_omega):
     """
     I -> R
 
     :param p_omega:
     """
     return p_omega
-
-
-def _get_combined_zeta_probability(p_zeta, age: int, opinion: int, is_disease_A: bool, is_disease_B: bool):
-    """
-    I -> D
-
-    :param p_zeta:
-    :param age:
-    :param opinion:
-    :param is_disease_A:
-    :param is_disease_B:
-    :return:
-    """
-    death_rate = death_rate_ratio(age)
-    if opinion == 1:
-        opinion_rate = 0.5
-    elif opinion == -1:
-        opinion_rate = 1.0
-
-    comoribidities_rate = 1.0
-    if is_disease_A and is_disease_B:
-        comoribidities_rate *= 3
-    elif is_disease_A:
-        comoribidities_rate *= 2
-    elif is_disease_B:
-        comoribidities_rate *= 1.5
-
-    return p_zeta * death_rate * opinion_rate * comoribidities_rate

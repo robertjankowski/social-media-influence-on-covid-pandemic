@@ -5,7 +5,7 @@ class SimulationConstants:
     N_AGENTS = 10000
     N_STEPS = 20000
     FRAC_ADDITIONAL_VIRTUAL_LINKS = 0.1
-    L1_DEFAULT_PARAMS = PhysicalLayerParameters(0.3, 0.2, 0.9, 0.5, 0.3)
+    L1_DEFAULT_PARAMS = PhysicalLayerParameters(0.3, 0.2, 0.9, 0.05)
     L2_VOTER_DEFAULT_PARAMS = QVoterParameters(4, 0.5)
     L2_SOCIAL_MEDIA_DEFAULT_PARAMS = SocialMediaParameters(0.1, 100)
 

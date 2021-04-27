@@ -124,10 +124,8 @@ def example_experiment(qs_ps: list, params: dict):
                                             q_voter_parameters,
                                             constants.l2_social_media_params,
                                             params['metrics'])
-
             dead_rate.append(out['dead_ratio'][-1])
             infected_rate.append(max(out['infected_ratio']))
-
         output_dead_rate[(p, q)] = np.mean(dead_rate)
         output_infected_rate[(p, q)] = np.mean(infected_rate)
     return output_dead_rate, output_infected_rate
@@ -136,5 +134,5 @@ def example_experiment(qs_ps: list, params: dict):
 if __name__ == '__main__':
     qs = [3, 4, 5, 6, 7]
     ps = [0.1, 0.2, 0.3, 0.4]
-    run_parallel(qs, ps, 'p_q', example_experiment, l1_params=PhysicalLayerParameters(0.4, 0.2, 0.1, 0.8, 0.2),
+    run_parallel(qs, ps, 'p_q', example_experiment, l1_params=PhysicalLayerParameters(0.4, 0.2, 0.9, 0.05),
                  n_agents=100, n_steps=1000, cpus=8)

@@ -6,7 +6,7 @@ from scripts.parameters import *
 from scripts.simulation import init_run_simulation
 from scripts.virtual_metrics import *
 
-DEFAULT_L1_PARAMS = PhysicalLayerParameters(0.2, 0.6, 0.999, 0.8, 0.2)
+DEFAULT_L1_PARAMS = PhysicalLayerParameters(0.2, 0.6, 0.999, 0.01)
 DEFAULT_L2_VOTER_PARAMS = QVoterParameters(4, 0.1)
 DEFAULT_L2_SOCIAL_MEDIA_PARAMS = SocialMediaParameters(0.1, 1)
 
@@ -56,7 +56,7 @@ def beta_lambda_dead_experiment(resolution=100):
         dead_ratio_output_part = []
         recovered_ratio_output_part = []
         for l in lambdas:
-            l1_params = PhysicalLayerParameters(b, 0.6, 0.9, 0.8, 0.1)
+            l1_params = PhysicalLayerParameters(b, 0.6, 0.9, 0.1)
 
             out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS,
                                               N_STEPS, l1_params, l2_voter_params,
@@ -90,7 +90,7 @@ def gamma_lambda_dead_experiment(resolution=100):
         dead_ratio_output_part = []
         recovered_ratio_output_part = []
         for l in lambdas:
-            l1_params = PhysicalLayerParameters(0.3, g, 0.9, 0.8, 0.1)
+            l1_params = PhysicalLayerParameters(0.3, g, 0.9, 0.1)
 
             out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS,
                                               N_STEPS, l1_params, l2_voter_params,
@@ -124,7 +124,7 @@ def gamma_p_dead_experiment(resolution=100):
         dead_ratio_output_part = []
         recovered_ratio_output_part = []
         for p in ps:
-            l1_params = PhysicalLayerParameters(0.3, g, 0.9, 0.8, 0.1)
+            l1_params = PhysicalLayerParameters(0.3, g, 0.9, 0.1)
             l2_voter_params = QVoterParameters(4, p)
 
             out, l1, l2 = init_run_simulation(N_AGENTS, N_ADDITIONAL_VIRTUAL_LINKS,
@@ -150,7 +150,7 @@ def social_media_experiment(resolution=10, n_repeat_step=10):
     xis = np.linspace(0, 1, resolution)
 
     metrics = {'dead_ratio': ('l1_layer', dead_ratio), 'recovered_ratio': ('l1_layer', recovered_ratio)}
-    l1_params = PhysicalLayerParameters(0.2, 0.6, 0.9, 0.8, 0.1)
+    l1_params = PhysicalLayerParameters(0.2, 0.6, 0.9, 0.1)
     l2_voter_params = QVoterParameters(4, 0.5)
 
     dead_ratio_output = []
@@ -186,7 +186,7 @@ def q_voter_experiment(qs: list, n_runs=10):
     metrics = {'dead_ratio': ('l1_layer', dead_ratio),
                'recovered_ratio': ('l1_layer', recovered_ratio),
                'infected_ratio': ('l1_layer', infected_ratio)}
-    l1_params = PhysicalLayerParameters(0.2, 0.6, 0.9, 0.8, 0.1)
+    l1_params = PhysicalLayerParameters(0.2, 0.6, 0.9, 0.1)
     l2_social_media_params = SocialMediaParameters(0, 1e10)
 
     dr_output = []
@@ -227,7 +227,7 @@ def experiment1(qs: list, ps: list, filename: str, n_runs=10):
     metrics = {'dead_ratio': ('l1_layer', dead_ratio),
                'recovered_ratio': ('l1_layer', recovered_ratio),
                'infected_ratio': ('l1_layer', infected_ratio)}
-    l1_params = PhysicalLayerParameters(0.05, 0.1, 0.8, 0.8, 0.1)
+    l1_params = PhysicalLayerParameters(0.05, 0.1, 0.8, 0.1)
     l2_social_media_params = SocialMediaParameters(1e10, 1e-10)
 
     out_dr = {}
@@ -267,7 +267,7 @@ def format_parameters(l1_params: PhysicalLayerParameters,
 def experiment2(xis: list, ns: list, filename: str, n_runs=10):
     metrics = {'dead_ratio': ('l1_layer', dead_ratio),
                'infected_ratio': ('l1_layer', infected_ratio)}
-    l1_params = PhysicalLayerParameters(0.5, 0.2, 0.85, 0.8, 0.1)
+    l1_params = PhysicalLayerParameters(0.5, 0.2, 0.85, 0.1)
     l2_voter_params = QVoterParameters(4, 0.5)
     out_dr = {}
     out_ir = {}
