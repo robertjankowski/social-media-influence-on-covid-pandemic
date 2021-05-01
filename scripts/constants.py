@@ -3,7 +3,7 @@ from scripts.parameters import *
 
 class SimulationConstants:
     N_AGENTS = 10000
-    N_STEPS = 20000
+    N_STEPS = 150000
     FRAC_ADDITIONAL_VIRTUAL_LINKS = 0.1
     L1_DEFAULT_PARAMS = PhysicalLayerParameters(0.1, 0.2, 0.9, 0.05, 10)
     L2_VOTER_DEFAULT_PARAMS = QVoterParameters(4, 0.5)

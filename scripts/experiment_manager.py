@@ -12,6 +12,7 @@ from scripts.epidemic_metrics import *
 from scripts.parameters import *
 from scripts.save_output import format_parameters, save_results
 from scripts.simulation import init_run_simulation
+from scripts.virtual_metrics import mean_opinion
 
 
 def run_parallel(params1: list,
@@ -48,7 +49,8 @@ def run_parallel(params1: list,
     """
     if metrics is None:
         metrics = {'dead_ratio': ('l1_layer', dead_ratio),
-                   'infected_ratio': ('l1_layer', infected_ratio)}
+                   'infected_ratio': ('l1_layer', infected_ratio),
+                   'mean_opinion': ('l2_layer', mean_opinion)}
     if l1_params is None:
         l1_params = constants.L1_DEFAULT_PARAMS
     if l2_voter_params is None:
@@ -84,17 +86,21 @@ def run_parallel(params1: list,
 
     output_dead_rate = []
     output_infected_rate = []
+    output_mean_opinion = []
     start = time.time()
     with mp.Pool(cpus) as pool:
-        for tmp_dead_rate, tmp_infected_rate in pool.starmap(experiment_fun, all_parameters):
+        for tmp_dead_rate, tmp_infected_rate, tmp_mean_opinion in pool.starmap(experiment_fun, all_parameters):
             output_dead_rate.append(tmp_dead_rate)
             output_infected_rate.append(tmp_infected_rate)
+            output_mean_opinion.append(tmp_mean_opinion)
 
     output_dead_rate = dict(ChainMap(*output_dead_rate))
     output_infected_rate = dict(ChainMap(*output_infected_rate))
+    output_mean_opinion = dict(ChainMap(*output_mean_opinion))
     parameters_name = filename + '_' + format_parameters(l1_params, l2_voter_params, l2_social_media_params,
-                                                         n_runs, n_steps, n_agents, frac_additional_virtual_links) + '.csv'
-    save_results(output_dead_rate, output_infected_rate, params1, params2, parameters_name)
+                                                         n_runs, n_steps, n_agents,
+                                                         frac_additional_virtual_links) + '.csv'
+    save_results(output_dead_rate, output_infected_rate, output_mean_opinion, params1, params2, parameters_name)
     end = time.time()
     print(f'Elapsed: {end - start} s')
 
@@ -131,8 +137,40 @@ def example_experiment(qs_ps: list, params: dict):
     return output_dead_rate, output_infected_rate
 
 
+def experiment1(qs_ps: list, params: dict):
+    output_dead_rate = {}
+    output_infected_rate = {}
+    output_mean_opinion = {}
+    constants = params['constants']
+    for q, p in qs_ps:
+        start = time.time()
+        print(f'Running q={q}, p={p} in process {mp.current_process().name}')
+        dead_rate = []
+        infected_rate = []
+        opinion_rate = []
+        for _ in range(params['n_runs']):
+            q_voter_parameters = QVoterParameters(q, p)
+            out, _, _ = init_run_simulation(constants.n_agents,
+                                            constants.n_additional_virtual_links,
+                                            constants.n_steps,
+                                            constants.l1_params,
+                                            q_voter_parameters,
+                                            constants.l2_social_media_params,
+                                            params['metrics'])
+
+            dead_rate.append(out['dead_ratio'][-1])
+            infected_rate.append(max(out['infected_ratio']))
+            opinion_rate.append(out['mean_opinion'][-1])
+        output_dead_rate[(p, q)] = np.mean(dead_rate)
+        output_infected_rate[(p, q)] = np.mean(infected_rate)
+        output_mean_opinion[(p, q)] = np.mean(opinion_rate)
+        end = time.time()
+        print(f'Elapsed: {end - start} s')
+    return output_dead_rate, output_infected_rate, output_mean_opinion
+
+
 if __name__ == '__main__':
-    qs = [3, 4, 5, 6, 7]
-    ps = [0.1, 0.2, 0.3, 0.4]
-    run_parallel(qs, ps, 'p_q', example_experiment, l1_params=PhysicalLayerParameters(0.4, 0.2, 0.9, 0.05, 10),
-                 n_agents=100, n_steps=1000, cpus=8)
+    qs = [3]
+    ps = [0.4]
+    run_parallel(qs, ps, 'p_q', experiment1, l1_params=PhysicalLayerParameters(0.4, 0.2, 0.9, 0.05, 10),
+                 n_runs=1,  cpus=8)

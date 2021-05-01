@@ -16,11 +16,13 @@ def format_parameters(l1_params: PhysicalLayerParameters,
            + f'_NAGENTS={n_agents}' + f'_NFRACLINKS={frac_additional_virtual_links}'
 
 
-def save_results(output_dead_rate: dict, output_infected_rate: dict, params1, params2, path: str):
+def save_results(output_dead_rate: dict, output_infected_rate: dict, output_mean_opinion, params1, params2, path: str):
     output_dead_rate = _format_result(output_dead_rate, params1, params2)
     output_infected_rate = _format_result(output_infected_rate, params1, params2)
+    output_mean_opinion = _format_result(output_mean_opinion, params1, params2)
     output_dead_rate.to_csv('dead_ratio_' + path)
     output_infected_rate.to_csv('infected_ratio_' + path)
+    output_mean_opinion.to_csv('mean_opinion_' + path)
 
 
 def _format_result(output_results: dict, params1, params2):
