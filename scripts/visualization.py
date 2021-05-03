@@ -1,6 +1,7 @@
 import sys
 
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import seaborn as sns
 
 sys.path.append("../")
@@ -163,3 +164,17 @@ def plot_heatmap(array, xtickslabels: list, ytickslabels: list, colorscale_label
                 yticklabels=yticks_labels, xticklabels=xticks_labels,
                 vmin=0, vmax=1, cbar_kws={'label': colorscale_label})
     plt.title(title_label)
+
+
+def plot_imshow(df, xlabel, ylabel, cmap=mpl.cm.Reds):
+    plt.imshow(df, cmap=cmap)
+
+    xticks = [float(x) for x in df.columns]
+    plt.xticks(range(len(xticks)), xticks)
+
+    yticks = [int(x) for x in df.index]
+    plt.yticks(range(len(yticks)), yticks)
+    plt.colorbar()
+
+    plt.xlabel(xlabel, fontsize=20)
+    plt.ylabel(ylabel, fontsize=20)

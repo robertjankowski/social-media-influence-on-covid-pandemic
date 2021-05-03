@@ -160,6 +160,8 @@ def _voter_act_non_conformity(random_node, l2_layer: nx.Graph):
 
 def _voter_act_conformity(random_node, l2_layer: nx.Graph, l2_voter_params: QVoterParameters):
     neighbours = list(l2_layer.neighbors(random_node))
+    if len(neighbours) < 1:  # when the selected node is isolated
+        return
     # Add the same neighbours if `random_node` does not have more than `q` neighbours
     while len(neighbours) < l2_voter_params.q:
         neighbours.append(random.choice(neighbours))
@@ -189,9 +191,11 @@ def _epidemic_layer_step(random_node, l1_layer: nx.Graph, l2_layer: nx.Graph, l1
         if l1.get_infected_time(l1_layer, random_node) >= l1_params.max_infected_time:
             if random.random() < _get_combined_gamma_probability(l1_params.p_gamma):  # I -> Q
                 l1.set_quarantined(l1_layer, random_node)
-                # remove all links if agent goes into quarantined state
+                # remove all links in both layers if agent goes into quarantined state
                 links = list(l1_layer.edges(random_node))
                 l1_layer.remove_edges_from(links)
+                links = list(l2_layer.edges(random_node))
+                l2_layer.remove_edges_from(links)
             elif random.random() < _get_combined_kappa_probability(l1_params.p_kappa, age):  # I -> R
                 l1.set_recovered(l1_layer, random_node)
             elif random.random() < _get_combined_mu_probability(l1_params.p_mu, age, is_disease_A,
