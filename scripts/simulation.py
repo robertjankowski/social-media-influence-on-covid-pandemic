@@ -19,6 +19,7 @@ def init_run_simulation(n_agents: int,
                         l2_social_media_params: SocialMediaParameters,
                         metrics: dict,
                         infected_fraction: float = 0.1,
+                        negative_opinion_fraction: float = 0.5,
                         network_m: int = 3,
                         network_p: int = 0.8,
                         verbose=False):
@@ -34,6 +35,7 @@ def init_run_simulation(n_agents: int,
     :param metrics: format e.g.:
                 {'aware_ratio': ('l1_layer': aware_ratio), 'infected_ratio': ('l2_layer', infected_ratio), ... }
     :param infected_fraction: Fraction of infected agents
+    :param negative_opinion_fraction: Fraction of agents with negative opinion
     :param network_m: The number of random edges to add for each new node
     :param network_p: Probability of adding the triangle after adding a random edge
     :param verbose: print simulation status
@@ -42,7 +44,7 @@ def init_run_simulation(n_agents: int,
     """
     l1_layer, l2_layer = create_bilayer_network(n_agents, n_additional_virtual_links, m=network_m, p=network_p)
     l1_layer_init = l1.initialize_epidemic(l1_layer)
-    l2_layer_init = l2.initialize_virtual(l2_layer)
+    l2_layer_init = l2.initialize_virtual(l2_layer, negative_opinion_fraction)
     l1_layer_init, l2_layer_init = initialize_bilayer_network(l1_layer_init, l2_layer_init, infected_fraction)
     return run(l1_layer_init,
                l2_layer_init,

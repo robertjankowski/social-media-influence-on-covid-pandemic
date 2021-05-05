@@ -28,6 +28,7 @@ def run_parallel(params1: list,
                  n_agents: int = None,
                  n_steps: int = None,
                  frac_additional_virtual_links: float = None,
+                 negative_opinion_fraction: float = None,
                  constants: SimulationConstants = SimulationConstants(),
                  n_runs=100,
                  cpus=mp.cpu_count()):
@@ -45,6 +46,7 @@ def run_parallel(params1: list,
     :param n_agents:
     :param n_steps:
     :param frac_additional_virtual_links:
+    :param negative_opinion_fraction:
     :param constants:
     :param n_runs: number of realizations of each run
     :param cpus: number of threads (default max number)
@@ -65,9 +67,12 @@ def run_parallel(params1: list,
         n_steps = constants.N_STEPS
     if frac_additional_virtual_links is None:
         frac_additional_virtual_links = constants.FRAC_ADDITIONAL_VIRTUAL_LINKS
+    if negative_opinion_fraction is None:
+        negative_opinion_fraction = constants.NEGATIVE_OPINION_FRACTION
 
     updated_constants = SimulationConstants(n_agents, n_steps, frac_additional_virtual_links,
-                                            l1_params, l2_voter_params, l2_social_media_params)
+                                            l1_params, l2_voter_params, l2_social_media_params,
+                                            negative_opinion_fraction)
 
     params_all = list(itertools.product(params1, params2))
     length = math.ceil(len(params_all) / cpus)
@@ -131,7 +136,8 @@ def example_experiment(qs_ps: list, params: dict):
                                             constants.l1_params,
                                             q_voter_parameters,
                                             constants.l2_social_media_params,
-                                            params['metrics'])
+                                            params['metrics'],
+                                            negative_opinion_fraction=constants.negative_opinion_fraction)
             dead_rate.append(out['dead_ratio'][-1])
             infected_rate.append(max(out['infected_ratio']))
         output_dead_rate[(p, q)] = np.mean(dead_rate)
@@ -159,7 +165,8 @@ def experiment1(qs_ps: list, params: dict):
                                             constants.l1_params,
                                             q_voter_parameters,
                                             constants.l2_social_media_params,
-                                            params['metrics'])
+                                            params['metrics'],
+                                            negative_opinion_fraction=constants.negative_opinion_fraction)
 
             dead_rate.append(out['dead_ratio'][-1])
             infected_rate.append(max(out['infected_ratio']))
@@ -180,4 +187,4 @@ if __name__ == '__main__':
     # ps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
     ps = np.linspace(0.01, 0.99, num=4)
     run_parallel(qs, ps, 'p_5_q', experiment1, l1_params=PhysicalLayerParameters(0.8, 0.5, 0.8, 0.1, 10),
-                 n_runs=2, cpus=10, n_agents=100, n_steps=50000)
+                 n_runs=2, cpus=10, n_agents=100, n_steps=50000, negative_opinion_fraction=0.0)
