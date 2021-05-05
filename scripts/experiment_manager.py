@@ -1,9 +1,11 @@
 import itertools
+import logging
 import math
 import multiprocessing as mp
 import time
 from collections import ChainMap
 from typing import Callable
+from logger_tt import setup_logging, logger
 
 import numpy as np
 
@@ -102,7 +104,7 @@ def run_parallel(params1: list,
                                                          frac_additional_virtual_links) + '.csv'
     save_results(output_dead_rate, output_infected_rate, output_mean_opinion, params1, params2, parameters_name)
     end = time.time()
-    print(f'Elapsed: {end - start} s')
+    logger.info(f'Elapsed: {end - start} s')
 
 
 def example_experiment(qs_ps: list, params: dict):
@@ -144,10 +146,11 @@ def experiment1(qs_ps: list, params: dict):
     constants = params['constants']
     for q, p in qs_ps:
         start = time.time()
-        print(f'Running q={q}, p={p} in process {mp.current_process().name}')
+        logger.info(f'Running q={q}, p={p} in process {mp.current_process().name}')
         dead_rate = []
         infected_rate = []
         opinion_rate = []
+        min_infected_rate = []
         for _ in range(params['n_runs']):
             q_voter_parameters = QVoterParameters(q, p)
             out, _, _ = init_run_simulation(constants.n_agents,
@@ -160,18 +163,21 @@ def experiment1(qs_ps: list, params: dict):
 
             dead_rate.append(out['dead_ratio'][-1])
             infected_rate.append(max(out['infected_ratio']))
+            min_infected_rate.append(out['infected_ratio'][-1])
             opinion_rate.append(out['mean_opinion'][-1])
         output_dead_rate[(p, q)] = np.mean(dead_rate)
         output_infected_rate[(p, q)] = np.mean(infected_rate)
         output_mean_opinion[(p, q)] = np.mean(opinion_rate)
+        logger.info('Last infected rate: {}'.format(np.mean(min_infected_rate)))
         end = time.time()
-        print(f'Elapsed: {end - start} s')
+        logger.info(f'Elapsed: {end - start} s')
     return output_dead_rate, output_infected_rate, output_mean_opinion
 
 
 if __name__ == '__main__':
+    setup_logging(full_context=1, suppress_level_below=logging.DEBUG, use_multiprocessing=True)
     qs = [5]
     # ps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
-    ps = np.linspace(0.01, 0.99, num=30)
+    ps = np.linspace(0.01, 0.99, num=4)
     run_parallel(qs, ps, 'p_5_q', experiment1, l1_params=PhysicalLayerParameters(0.8, 0.5, 0.8, 0.1, 10),
-                 n_runs=5,  cpus=10, n_agents=1000, n_steps=50000)
+                 n_runs=2, cpus=10, n_agents=100, n_steps=50000)

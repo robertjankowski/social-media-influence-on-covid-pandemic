@@ -7,3 +7,4 @@ jupyter
 tqdm
 statsmodels
 seaborn
+logger_tt
