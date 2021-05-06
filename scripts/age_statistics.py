@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 
 def generate_from_age_gender_distribution(samples: int, gender: str):
@@ -8,10 +9,22 @@ def generate_from_age_gender_distribution(samples: int, gender: str):
     :param gender: Female or Male ('F' or 'M')
     :param samples: Number of agents
     """
+
+    pathA = '../../data/poland_population_age_distribution.txt'
+    pathB = '../data/poland_population_age_distribution.txt'
+    if os.path.exists(pathA):
+        return _generate_from_age_gender_distribution(pathA, samples, gender)
+    elif os.path.exists(pathB):
+        return _generate_from_age_gender_distribution(pathB, samples, gender)
+    else:
+        print('Cannot find age distribution file!')
+
+
+def _generate_from_age_gender_distribution(path: str, samples: int, gender: str):
     total_population = 0
     probability = []
     ages = []
-    with open('../data/poland_population_age_distribution.txt') as f:
+    with open(path) as f:
         f.readline()  # omit header
         for line in f:
             age, total, males, females = [int(x) for x in line.strip().split('\t')]

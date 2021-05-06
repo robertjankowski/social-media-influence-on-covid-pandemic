@@ -133,5 +133,15 @@ def increment_infected_time(g: nx.Graph, node, opinion):
         g.nodes[node]['I_time'] += 1
 
 
+def increment_infected_time_comorbid(g: nx.Graph, node, comorbid_A, comorbid_B):
+    """
+    The agents with a comorbid_B stay longer in an infected state
+    """
+    if comorbid_B:
+        g.nodes[node]['I_time'] += 0.5
+    else:
+        g.nodes[node]['I_time'] += 1
+
+
 def get_infected_time(g: nx.Graph, node):
     return g.nodes[node]['I_time']

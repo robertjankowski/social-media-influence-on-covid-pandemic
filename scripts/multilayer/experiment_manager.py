@@ -9,11 +9,11 @@ from logger_tt import setup_logging, logger
 
 import numpy as np
 
-from scripts.constants import SimulationConstants
+from scripts.multilayer.constants import SimulationConstants
 from scripts.epidemic_metrics import *
 from scripts.parameters import *
-from scripts.save_output import format_parameters, save_results
-from scripts.simulation import init_run_simulation
+from scripts.multilayer.save_output import format_parameters, save_results
+from scripts.multilayer.simulation import init_run_simulation
 from scripts.virtual_metrics import mean_opinion
 
 

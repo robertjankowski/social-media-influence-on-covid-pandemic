@@ -1,6 +1,6 @@
 from scripts.epidemic_metrics import *
 from scripts.parameters import *
-from scripts.simulation import init_run_simulation
+from scripts.multilayer.simulation import init_run_simulation
 from scripts.virtual_metrics import *
 
 DEFAULT_L1_PARAMS = PhysicalLayerParameters(0.2, 0.6, 0.999, 0.01, 10)

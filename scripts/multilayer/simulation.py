@@ -148,7 +148,6 @@ def _social_media_layer_step(step, l2_layer: nx.Graph, l2_social_media_params: S
 def _virtual_layer_step(random_node,
                         l2_layer: nx.Graph,
                         l2_voter_params: QVoterParameters):
-    # run Voter model even though the agent is in UNAWARE state
     if random.random() < l2_voter_params.p_p:
         _voter_act_non_conformity(random_node, l2_layer)
     else:
