@@ -197,21 +197,23 @@ def _epidemic_layer_step(random_node, l1_layer: nx.Graph, l2_layer: nx.Graph, l1
                 l1_layer.remove_edges_from(links)
                 links = list(l2_layer.edges(random_node))
                 l2_layer.remove_edges_from(links)
-            elif random.random() < _get_combined_kappa_probability(l1_params.p_kappa, age):  # I -> R
-                l1.set_recovered(l1_layer, random_node)
+            elif random.random() < _get_combined_kappa_probability(l1_params.p_kappa, age, is_disease_A,
+                                                                   is_disease_B):  # I -> R
+                l1.set_dead(l1_layer, random_node)
             elif random.random() < _get_combined_mu_probability(l1_params.p_mu, age, is_disease_A,
                                                                 is_disease_B):  # I -> D
-                l1.set_dead(l1_layer, random_node)
+                l1.set_recovered(l1_layer, random_node)
 
     elif l1_node_status == 'Q':
         if random.random() < _get_combined_mu_probability(l1_params.p_mu, age, is_disease_A, is_disease_B):
             l1.set_recovered(l1_layer, random_node)
-        elif random.random() < _get_combined_kappa_probability(l1_params.p_kappa, age):
+        elif random.random() < _get_combined_kappa_probability(l1_params.p_kappa, age, is_disease_A, is_disease_B):
             l1.set_dead(l1_layer, random_node)
 
 
 def _get_combined_beta_probability(p_beta: float, opinion):
     """
+    S -> I
     :param p_beta:
     :param opinion: positive opinion reduce the probability of infection
     :return: combined infected probability
@@ -225,42 +227,36 @@ def _get_combined_beta_probability(p_beta: float, opinion):
 
 def _get_combined_gamma_probability(p_gamma: float):
     """
-
-    :param p_gamma:
-    :return:
+    I -> Q
     """
     return p_gamma
 
 
 def _get_combined_mu_probability(p_mu: float, age: int, is_disease_A: bool, is_disease_B: bool):
     """
-    Decrease probability of recovery based on age death rate ratio.
-
-    :param p_mu:
-    :param age:
-    :param opinion:
-    :param is_disease_A:
-    :param is_disease_B:
-    """
-    death_rate = death_rate_ratio(age)
-
-    # TODO: For not we neglect the comorbidity
-    comoribidities_rate = 1.0
-    if is_disease_A and is_disease_B:
-        comoribidities_rate *= 1
-    elif is_disease_A:
-        comoribidities_rate *= 1
-    elif is_disease_B:
-        comoribidities_rate *= 1
-
-    return p_mu * (1 - death_rate) / comoribidities_rate
-
-
-def _get_combined_kappa_probability(p_kappa, age):
-    """
     I -> R, Q -> R
-
-    :param p_kappa:
     """
+    # TODO: For not we neglect the comorbidity
+    # comoribidities_rate = _comorbid_rate(is_disease_A, is_disease_B)
+    # death_rate = death_rate_ratio(age)
+    return p_mu
+
+
+def _get_combined_kappa_probability(p_kappa, age, is_disease_A: bool, is_disease_B: bool):
+    """
+    I -> D, Q -> D
+    """
+    # comoribidities_rate = _comorbid_rate(is_disease_A, is_disease_B)
     death_rate = death_rate_ratio(age)
     return p_kappa * death_rate
+
+
+def _comorbid_rate(is_disease_A: bool, is_disease_B: bool):
+    comoribidities_rate = 1.0
+    if is_disease_A and is_disease_B:
+        comoribidities_rate *= 3
+    elif is_disease_A:
+        comoribidities_rate *= 1.5
+    elif is_disease_B:
+        comoribidities_rate *= 2
+    return comoribidities_rate
