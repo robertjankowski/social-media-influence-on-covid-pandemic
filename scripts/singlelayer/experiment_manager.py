@@ -79,7 +79,7 @@ def run_parallel(params1: list,
 
     output_dead_rate = dict(ChainMap(*output_dead_rate))
     output_infected_rate = dict(ChainMap(*output_infected_rate))
-    parameters_name = filename + '_' + format_parameters(l1_params,
+    parameters_name = filename + '_' + format_parameters(updated_constants.l1_params,
                                                          n_runs,
                                                          updated_constants.n_steps,
                                                          updated_constants.n_agents,

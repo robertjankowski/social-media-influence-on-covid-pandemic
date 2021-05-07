@@ -184,9 +184,10 @@ def _get_combined_kappa_probability(p_kappa, age, is_disease_A: bool, is_disease
 
     :param p_kappa:
     """
-    comoribidities_rate = _comorbid_rate(is_disease_A, is_disease_B)
-    death_rate = death_rate_ratio(age)
-    return p_kappa * death_rate * comoribidities_rate
+    # TODO: for now the commorbidities are included only in \mu probability
+    # comoribidities_rate = _comorbid_rate(is_disease_A, is_disease_B)
+    # death_rate = death_rate_ratio(age)
+    return p_kappa
 
 
 def _comorbid_rate(is_disease_A: bool, is_disease_B: bool):
