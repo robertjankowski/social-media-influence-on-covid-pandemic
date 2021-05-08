@@ -187,8 +187,9 @@ def _get_combined_kappa_probability(p_kappa, age, is_disease_A: bool, is_disease
     :param p_kappa:
     """
     comoribidities_rate = _comorbid_rate(is_disease_A, is_disease_B)
-    death_rate = death_rate_ratio(age)
-    return p_kappa * comoribidities_rate * death_rate
+    #death_rate = death_rate_ratio(age)
+    # NOTE: death rate produces very low probability for middle-age people
+    return p_kappa * comoribidities_rate # * death_rate
 
 
 def _comorbid_rate(is_disease_A: bool, is_disease_B: bool):
