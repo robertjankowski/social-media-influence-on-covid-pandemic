@@ -132,7 +132,7 @@ def _single_step(step,
                  l2_social_media_params: SocialMediaParameters):
     N = l1_layer.number_of_nodes()
     random_node = random.randint(0, N - 1)
-    _social_media_layer_step(step, l2_layer, l2_social_media_params)
+    # _social_media_layer_step(step, l2_layer, l2_social_media_params) # For not it is not working
     _virtual_layer_step(random_node, l2_layer, l2_voter_params)
     _epidemic_layer_step(random_node, l1_layer, l2_layer, l1_params)
 

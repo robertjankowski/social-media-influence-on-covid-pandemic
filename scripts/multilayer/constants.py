@@ -7,7 +7,7 @@ class SimulationConstants:
     FRAC_ADDITIONAL_VIRTUAL_LINKS = 0.1
     NEGATIVE_OPINION_FRACTION = 0.5
     L1_DEFAULT_PARAMS = PhysicalLayerParameters(0.1, 0.2, 0.9, 0.05, 10)
-    L2_VOTER_DEFAULT_PARAMS = QVoterParameters(4, 0.5)
+    L2_VOTER_DEFAULT_PARAMS = QVoterParameters(0.5, 4)
     L2_SOCIAL_MEDIA_DEFAULT_PARAMS = SocialMediaParameters(0.1, 100)
 
     @staticmethod

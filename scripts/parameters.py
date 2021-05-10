@@ -29,13 +29,12 @@ class PhysicalLayerParameters:
 class QVoterParameters:
     """Parameters of q-voter model in $$l_2$$ (communication) layer
 
-    q: number of neighbours
-
     p_p: probability that agent acts individually
 
+    q: number of neighbours
     """
-    q: int
     p_p: float
+    q: int
 
     def __str__(self):
         return f'q={self.q}_p={self.p_p}'
