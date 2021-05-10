@@ -164,6 +164,8 @@ def _voter_act_conformity(random_node, l2_layer: nx.Graph, l2_voter_params: QVot
     if len(neighbours) < 1:  # when the selected node is isolated
         return
     # Add the same neighbours if `random_node` does not have more than `q` neighbours
+    if len(neighbours) > l2_voter_params.q:
+        neighbours = neighbours[:l2_voter_params.q]
     while len(neighbours) < l2_voter_params.q:
         neighbours.append(random.choice(neighbours))
     neighbours_opinions = sum([l2.get_opinion(l2_layer, n) for n in neighbours])
