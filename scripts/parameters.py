@@ -25,7 +25,6 @@ class PhysicalLayerParameters:
         return f'beta={self.p_beta}_gamma={self.p_gamma}_mu={self.p_mu}_kappa={self.p_kappa}_max_infected_time={self.max_infected_time}'
 
 
-@dataclass
 class QVoterParameters:
     """Parameters of q-voter model in $$l_2$$ (communication) layer
 
@@ -33,8 +32,10 @@ class QVoterParameters:
 
     q: number of neighbours
     """
-    p_p: float
-    q: int
+
+    def __init__(self, p_p, q):
+        self.p_p = p_p
+        self.q = q
 
     def __str__(self):
         return f'q={self.q}_p={self.p_p}'

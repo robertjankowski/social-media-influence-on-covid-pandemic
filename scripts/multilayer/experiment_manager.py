@@ -128,8 +128,7 @@ def example_experiment(qs_ps: list, params: dict):
         dead_rate = []
         infected_rate = []
         for _ in range(params['n_runs']):
-            q_voter_parameters = QVoterParameters(q, p)
-
+            q_voter_parameters = QVoterParameters(p, q)
             out, _, _ = init_run_simulation(constants.n_agents,
                                             constants.n_additional_virtual_links,
                                             constants.n_steps,
@@ -158,7 +157,7 @@ def experiment1(qs_ps: list, params: dict):
         opinion_rate = []
         min_infected_rate = []
         for _ in range(params['n_runs']):
-            q_voter_parameters = QVoterParameters(q, p)
+            q_voter_parameters = QVoterParameters(p, q)
             out, _, _ = init_run_simulation(constants.n_agents,
                                             constants.n_additional_virtual_links,
                                             constants.n_steps,
@@ -167,7 +166,6 @@ def experiment1(qs_ps: list, params: dict):
                                             constants.l2_social_media_params,
                                             params['metrics'],
                                             negative_opinion_fraction=constants.negative_opinion_fraction)
-
             dead_rate.append(out['dead_ratio'][-1])
             infected_rate.append(max(out['infected_ratio']))
             min_infected_rate.append(out['infected_ratio'][-1])

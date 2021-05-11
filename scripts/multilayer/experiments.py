@@ -4,7 +4,7 @@ from scripts.multilayer.simulation import init_run_simulation
 from scripts.virtual_metrics import *
 
 DEFAULT_L1_PARAMS = PhysicalLayerParameters(0.2, 0.6, 0.999, 0.01, 10)
-DEFAULT_L2_VOTER_PARAMS = QVoterParameters(4, 0.5)
+DEFAULT_L2_VOTER_PARAMS = QVoterParameters(0.5, 4)
 DEFAULT_L2_SOCIAL_MEDIA_PARAMS = SocialMediaParameters(0.1, 1)
 
 metrics = {'infected_ratio': ('l1_layer', infected_ratio),

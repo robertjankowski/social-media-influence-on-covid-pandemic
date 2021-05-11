@@ -73,7 +73,6 @@ def initialize_bilayer_network(l1_layer, l2_layer, infected_fraction):
     infected_nodes = np.random.choice(N, size=infected_size)
     for i in infected_nodes:
         l1.set_infected(l1_layer_copy, i)
-    # infected_node = random.choice(list(range(1, nx.number_of_nodes(l1_layer_copy))))
     return l1_layer_copy, l2_layer_copy
 
 
